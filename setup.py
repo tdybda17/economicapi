@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="economicapi-tdybda", # Replace with your own username
+    name="dybdahl-economicapi", # Replace with your own username
     version="0.0.1",
     author="tdybda17",
     author_email="tdybda17@student.aau.dk",
@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/tdybda17/economicapi",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=("tests", "economicapi")),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
