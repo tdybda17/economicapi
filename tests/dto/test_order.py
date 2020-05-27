@@ -98,7 +98,7 @@ class TestOrder(TestCase):
                 payment_terms_number=1,
                 days_of_credit=14,
                 name='Lobende maned 14 dage',
-                payment_terms_type='invoiceMonth'
+                payment_terms_type='net'
             ),
             customer=Customer(
                 customer_number=1
