@@ -21,12 +21,6 @@ class TestPostProduct(TestCase):
             'salesPrice': 20.3,
         })
 
-    def test_can_post_product(self):
-        response = PutProduct().put(self.product)
-        print(response.status_code)
-        print(response.content)
-        print(type(response))
-
     def test_when_product_number_does_not_exists_Should_make_product_and_return_201(self):
         with mock.patch.object(PutProduct, 'put') as put:
             put.return_value = self._create_mock_request(201)
