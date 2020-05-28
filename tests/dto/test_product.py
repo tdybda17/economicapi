@@ -1,6 +1,6 @@
 from django.test import TestCase, RequestFactory
 
-from economic_dybdahl_rest.dto.product import Product
+from economic_dybdahl_rest.dto.product import Product, ProductValidationError
 from economic_dybdahl_rest.dto.product_group import ProductGroup
 
 
@@ -30,6 +30,9 @@ class TestProduct(TestCase):
             'productNumber': '500',
             'recommendedPrice': 50,
             'salesPrice': 100,
+            'inventory': {
+                'recommendedCostPrice': 50
+            }
         }
         self.assertDictEqual(expected, product.to_dict())
 
@@ -78,3 +81,70 @@ class TestProduct(TestCase):
         self.assertEqual('My test product', product.name)
         self.assertEqual('500', product.product_number)
         self.assertEqual('100', product.recommended_price)
+
+    def test_when_cost_price_is_not_float_Should_raise_error(self):
+        product = Product.from_dict({
+            'barCode': '5738951475903',
+            'costPrice': 'illegal',  # illegal price
+            'description': 'd',
+            'name': 'My test product',
+            'productGroup': {
+                'productGroupNumber': 1
+            },
+            'productNumber': '500',
+            'recommendedPrice': '100',
+            'salesPrice': 100,
+        })
+        with self.assertRaises(ProductValidationError):
+            product.validate()
+
+    def test_when_recommended_price_is_not_float_Should_raise_error(self):
+        product = Product.from_dict({
+            'barCode': '5738951475903',
+            'costPrice': '10',
+            'description': 'd',
+            'name': 'My test product',
+            'productGroup': {
+                'productGroupNumber': 1
+            },
+            'productNumber': '500',
+            'recommendedPrice': 'illegal',  # illegal price
+            'salesPrice': 100,
+        })
+        with self.assertRaises(ProductValidationError):
+            product.validate()
+
+    def test_when_sales_price_is_not_float_Should_raise_error(self):
+        product = Product.from_dict({
+            'barCode': '5738951475903',
+            'costPrice': '10',
+            'description': 'd',
+            'name': 'My test product',
+            'productGroup': {
+                'productGroupNumber': 1
+            },
+            'productNumber': '500',
+            'recommendedPrice': '100',
+            'salesPrice': 'illegal',  # illegal price
+        })
+        with self.assertRaises(ProductValidationError):
+            product.validate()
+
+    def test_when_valid_validation_Should_have_converted_fields_to_correct_types(self):
+        product = Product.from_dict({
+            'barCode': '5738951475903',
+            'costPrice': '10',
+            'description': 'd',
+            'name': 'My test product',
+            'productGroup': {
+                'productGroupNumber': '1'
+            },
+            'productNumber': '500',
+            'recommendedPrice': '100',
+            'salesPrice': '2.2',
+        })
+        product.validate()
+        self.assertEqual(10.00, product.cost_price)
+        self.assertEqual(1, product.product_group.product_group_number)
+        self.assertEqual(100.00, product.recommended_price)
+        self.assertEqual(2.20, product.sales_price)

@@ -17,7 +17,7 @@ class TestPostProduct(TestCase):
             },
             'productNumber': '15002',
             'recommendedPrice': 50,
-            'salesPrice': '1004',
+            'salesPrice': 1004.2,
         })
 
     def test_can_post_product(self):

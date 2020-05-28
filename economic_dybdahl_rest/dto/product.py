@@ -34,7 +34,10 @@ class Product(Model):
             'productGroup': self.product_group.to_dict(),
             'productNumber': self.product_number,
             'recommendedPrice': self.recommended_price,
-            'salesPrice': self.sales_price
+            'salesPrice': self.sales_price,
+            'inventory': {
+                'recommendedCostPrice': self.recommended_price
+            }
         }
 
     @staticmethod
@@ -62,3 +65,29 @@ class Product(Model):
             recommended_price=request.POST.get('sale_price'),
             sales_price=request.POST.get('sale_price')
         )
+
+    def validate(self):
+        try:
+            self.cost_price = float(self.cost_price)
+        except ValueError:
+            raise ProductValidationError('Cost price needs to be a number')
+
+        try:
+            self.sales_price = float(self.sales_price)
+        except ValueError:
+            raise ProductValidationError('Sale price needs to be a number')
+
+        try:
+            self.recommended_price = float(self.recommended_price)
+        except ValueError:
+            raise ProductValidationError('Recommended price should be a number')
+
+        try:
+            self.product_group.product_group_number = int(self.product_group.product_group_number)
+        except ValueError:
+            raise ProductValidationError('Product group needs to be an integer')
+
+
+class ProductValidationError(RuntimeError):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
