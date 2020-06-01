@@ -1,11 +1,11 @@
 class EconomicApi:
 
-    url = 'https://restapi.e-conomic.com/'
+    ECONOMIC_URL = 'https://restapi.e-conomic.com/'
     headers = {
         'Content-Type': 'application/json',
-        'X-AppSecretToken': 'demo',
-        'X-AgreementGrantToken': 'demo'
+        'X-AppSecretToken': '',
+        'X-AgreementGrantToken': ''
     }
 
     def __init__(self, path) -> None:
-        self.url += path
+        self.ECONOMIC_URL += path

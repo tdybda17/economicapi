@@ -13,7 +13,7 @@ class PostDraftOrder(EconomicApi):
 
     def post(self, order: Order):
         response = requests.post(
-            url=self.url,
+            url=self.ECONOMIC_URL,
             data=order.to_json(),
             headers=self.headers
         )
