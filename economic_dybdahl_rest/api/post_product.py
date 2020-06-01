@@ -13,7 +13,7 @@ class PostProduct(EconomicApi):
 
     def post(self, product: Product):
         response = requests.post(
-            url=self.url,
+            url=self.ECONOMIC_URL,
             data=product.to_json(),
             headers=self.headers
         )

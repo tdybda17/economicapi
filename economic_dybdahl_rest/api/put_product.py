@@ -12,9 +12,9 @@ class PutProduct(EconomicApi):
         super().__init__(self.path)
 
     def put(self, product: Product):
-        self.url += '/' + product.product_number
+        self.ECONOMIC_URL += '/' + product.product_number
         response = requests.put(
-            url=self.url,
+            url=self.ECONOMIC_URL,
             data=product.to_json(),
             headers=self.headers
         )
