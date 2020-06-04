@@ -12,7 +12,7 @@ class TestSyncProductEndpoint(TestCase):
 
     def setUp(self) -> None:
         self.client = APIClient()
-        self.url = '/api/v1/sync-product'
+        self.url = '/api/v1/product/'
         user = User.objects.create_superuser(username='tobias', email='t@t.dk', password='123')
         token = Token.objects.create(user_id=user.id, key='123')
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
