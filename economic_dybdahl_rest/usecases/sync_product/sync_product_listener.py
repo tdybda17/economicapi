@@ -16,13 +16,13 @@ class SyncProductListener(Listener):
     def on_success(self):
         self.response = Response(
             status_code=200,
-            data={'message': 'product created'}
+            data={'message': 'product updated'}
         )
 
     def on_product_created(self):
         self.response = Response(
             status_code=201,
-            data={'message': 'product updated'}
+            data={'message': 'product created'}
         )
 
     def on_schema_validation_error(self, content):
