@@ -2,14 +2,15 @@ from economic_dybdahl_rest.api.put_product import PutProduct
 from economic_dybdahl_rest.dto.product import ProductValidationError
 
 
-class SyncProductUseCase:
+class PutProductUseCase:
 
     @staticmethod
-    def sync(product, listener):
+    def put(product, listener):
         try:
             product.validate()
         except ProductValidationError as e:
-            listener.on_validation_error(e)
+            listener.on_validation_error(str(e))
+            return
 
         api = PutProduct()
         response = api.put(product)
