@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dybdahl-economicapi", # Replace with your own username
-    version="0.0.1",
+    version="1.0.0",
     author="tdybda17",
     author_email="tdybda17@student.aau.dk",
     description="E-conomic order api",
