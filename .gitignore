@@ -1,7 +1,8 @@
 # Project exclude paths
 /venv/
 .github/
-
+settings.py
+economicapi/settings.py
 
 # Created by https://www.gitignore.io/api/python,django,pycharm
 # Edit at https://www.gitignore.io/?templates=python,django,pycharm
