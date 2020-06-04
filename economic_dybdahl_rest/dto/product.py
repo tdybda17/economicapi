@@ -67,6 +67,9 @@ class Product(Model):
         )
 
     def validate(self):
+        if self.product_number is None:
+            raise ProductValidationError('Hash value/product number is required')
+
         try:
             self.cost_price = float(self.cost_price)
         except ValueError:
