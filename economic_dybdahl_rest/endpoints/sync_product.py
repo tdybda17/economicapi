@@ -1,18 +1,18 @@
 from django.http import JsonResponse
-from django.views import View
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 from economic_dybdahl_rest.dto.product import Product
-from economic_dybdahl_rest.http.headers import Headers
 from economic_dybdahl_rest.usecases.sync_product.sync_product import SyncProductUseCase
 from economic_dybdahl_rest.usecases.sync_product.sync_product_listener import SyncProductListener
 
 
-class SyncProductEndpoint(View):
+class SyncProductEndpoint(APIView):
+    permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def put(self, request):
         product = Product.from_request(request)
         listener = SyncProductListener()
-        headers = Headers.from_request(request)
-        SyncProductUseCase.sync(product, headers, listener)
+        SyncProductUseCase.sync(product, listener)
         response = listener.get_response()
         return JsonResponse(data=response.to_dict())

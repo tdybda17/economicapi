@@ -5,14 +5,13 @@ from economic_dybdahl_rest.dto.product import ProductValidationError
 class SyncProductUseCase:
 
     @staticmethod
-    def sync(product, headers, listener):
+    def sync(product, listener):
         try:
             product.validate()
         except ProductValidationError as e:
             listener.on_validation_error(e)
 
         api = PutProduct()
-        api.headers = headers.headers
         response = api.put(product)
         if response.status_code == 200:
             listener.on_success()
