@@ -36,7 +36,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'economic_dybdahl_rest.apps.EconomicDybdahlRestConfig'
+    'rest_framework',
+    'rest_framework.authtoken',
+
+    'economic_dybdahl_rest.apps.EconomicDybdahlRestConfig',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +51,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # <-- And here
+    ],
+}
 
 ROOT_URLCONF = 'economicapi.urls'
 
@@ -119,3 +128,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+X_APP_SECRET_TOKEN = ''
+X_AGREEMENT_GRANT_TOKEN = ''
