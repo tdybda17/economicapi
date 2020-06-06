@@ -36,7 +36,7 @@ class Product(Model):
             'recommendedPrice': self.recommended_price,
             'salesPrice': self.sales_price,
             'inventory': {
-                'recommendedCostPrice': self.recommended_price
+                'recommendedCostPrice': self.cost_price
             }
         }
 
