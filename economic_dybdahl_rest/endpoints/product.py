@@ -15,4 +15,4 @@ class ProductEndpoint(APIView):
         listener = SyncProductListener()
         PutProductUseCase.put(product, listener)
         response = listener.get_response()
-        return JsonResponse(data=response.to_dict())
+        return JsonResponse(data=response.to_dict(), status=response.status_code)
