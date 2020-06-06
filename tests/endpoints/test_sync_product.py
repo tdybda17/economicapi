@@ -70,8 +70,5 @@ class TestSyncProductEndpoint(TestCase):
         }
 
     def _create_mock_response(self, status_code, content):
-        """response = Response()
-        response.status_code = status_code
-        return response"""
         Response = namedtuple("Response", ['status_code', 'content'])
         return Response(status_code=status_code, content=content)
