@@ -19,6 +19,7 @@ class TestPostProduct(TestCase):
             'productNumber': 'h123iqwjd2enwef',
             'recommendedPrice': 50,
             'salesPrice': 20.3,
+            'barred': False,
         })
 
     def test_when_product_number_does_not_exists_Should_make_product_and_return_201(self):

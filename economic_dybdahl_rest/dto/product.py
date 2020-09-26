@@ -14,6 +14,7 @@ class Product(Model):
             product_number,
             recommended_price,
             sales_price,
+            barred
     ):
         self.bar_code = bar_code
         self.cost_price = cost_price
@@ -23,12 +24,14 @@ class Product(Model):
         self.product_number = product_number
         self.recommended_price = recommended_price
         self.sales_price = sales_price
+        self.barred = barred
         super().__init__()
 
     def to_dict(self):
         return {
             'barCode': self.bar_code,
             'costPrice': self.cost_price,
+            'barred': self.barred,
             'description': self.description,
             'name': self.name,
             'productGroup': self.product_group.to_dict(),
@@ -50,7 +53,8 @@ class Product(Model):
             product_group=ProductGroup.from_dict(_dict['productGroup']),
             product_number=_dict['productNumber'],
             recommended_price=_dict['recommendedPrice'],
-            sales_price=_dict['salesPrice']
+            sales_price=_dict['salesPrice'],
+            barred=_dict['barred']
         )
 
     @staticmethod
@@ -63,7 +67,8 @@ class Product(Model):
             product_group=ProductGroup(request.POST.get('company_group_number', 0)),
             product_number=request.POST.get('hash_value'),
             recommended_price=request.POST.get('sale_price'),
-            sales_price=request.POST.get('sale_price')
+            sales_price=request.POST.get('sale_price'),
+            barred=request.POST.get('barred', False)
         )
 
     def validate(self):
