@@ -10,5 +10,5 @@ class Listener:
     def on_unknown_error(self, status_code, content):
         raise NotImplementedError()
 
-    def on_does_on_exist(self):
+    def on_does_not_exist(self):
         raise NotImplementedError()

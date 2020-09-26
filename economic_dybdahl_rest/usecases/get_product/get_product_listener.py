@@ -13,12 +13,14 @@ class GetProductListener(Listener):
         )
 
     def on_unknown_error(self, status_code, content):
+        content_dict = json.loads(content.decode("utf-8"))
+        content_dict['status_code'] = status_code
         self.response = Response(
-            status_code=status_code,
-            data=json.load(content.decode('utf-8'))
+            status_code=520,
+            data=content_dict
         )
 
-    def on_does_on_exist(self):
+    def on_does_not_exist(self):
         self.response = Response(
             status_code=404,
             data={'message': 'Product does not exist'}
