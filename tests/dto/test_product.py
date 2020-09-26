@@ -136,6 +136,22 @@ class TestProduct(TestCase):
         with self.assertRaises(ProductValidationError):
             product.validate()
 
+    def test_can_convert_barred_to_boolean(self):
+        product = Product.from_dict({
+            'barCode': '5738951475903',
+            'costPrice': '10',
+            'description': 'd',
+            'name': 'My test product',
+            'productGroup': {
+                'productGroupNumber': 1
+            },
+            'productNumber': '500',
+            'recommendedPrice': '100',
+            'salesPrice': 'illegal',  # illegal price,
+            'barred': 'True',
+        })
+        self.assertTrue(product.barred)
+
     def test_when_valid_validation_Should_have_converted_fields_to_correct_types(self):
         product = Product.from_dict({
             'barCode': '5738951475903',
@@ -155,3 +171,4 @@ class TestProduct(TestCase):
         self.assertEqual(1, product.product_group.product_group_number)
         self.assertEqual(100.00, product.recommended_price)
         self.assertEqual(2.20, product.sales_price)
+        self.assertFalse(product.barred)
