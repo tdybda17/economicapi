@@ -6,7 +6,7 @@ from economic_dybdahl_rest.usecases._listener import Listener
 
 class DeleteProductListener(Listener):
 
-    def on_success(self):
+    def on_success(self, data=None):
         self.response = Response(
             status_code=200,
             data={'message': 'product updated'}
