@@ -17,7 +17,8 @@ class TestProduct(TestCase):
             ),
             product_number='500',
             recommended_price=50,
-            sales_price=100
+            sales_price=100,
+            barred=False
         )
         expected = {
             'barCode': '5738951475903',
@@ -32,7 +33,8 @@ class TestProduct(TestCase):
             'salesPrice': 100,
             'inventory': {
                 'recommendedCostPrice': 50
-            }
+            },
+            'barred': False
         }
         self.assertDictEqual(expected, product.to_dict())
 
@@ -48,6 +50,7 @@ class TestProduct(TestCase):
             'productNumber': '500',
             'recommendedPrice': 50,
             'salesPrice': 100,
+            'barred': False
         })
         self.assertEqual('5738951475903', product.bar_code)
         self.assertEqual(50, product.cost_price)
@@ -94,6 +97,7 @@ class TestProduct(TestCase):
             'productNumber': '500',
             'recommendedPrice': '100',
             'salesPrice': 100,
+            'barred': False,
         })
         with self.assertRaises(ProductValidationError):
             product.validate()
@@ -110,6 +114,7 @@ class TestProduct(TestCase):
             'productNumber': '500',
             'recommendedPrice': 'illegal',  # illegal price
             'salesPrice': 100,
+            'barred': False
         })
         with self.assertRaises(ProductValidationError):
             product.validate()
@@ -125,7 +130,8 @@ class TestProduct(TestCase):
             },
             'productNumber': '500',
             'recommendedPrice': '100',
-            'salesPrice': 'illegal',  # illegal price
+            'salesPrice': 'illegal',  # illegal price,
+            'barred': False,
         })
         with self.assertRaises(ProductValidationError):
             product.validate()
@@ -142,6 +148,7 @@ class TestProduct(TestCase):
             'productNumber': '500',
             'recommendedPrice': '100',
             'salesPrice': '2.2',
+            'barred': False,
         })
         product.validate()
         self.assertEqual(10.00, product.cost_price)
