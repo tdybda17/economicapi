@@ -11,7 +11,7 @@ class GetProduct(EconomicApi):
         super().__init__(self.path)
 
     def get(self, product_number):
-        response = requests.post(
+        response = requests.get(
             url=self.ECONOMIC_URL + '/' + product_number,
             headers=self.headers
         )
