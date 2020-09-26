@@ -95,9 +95,12 @@ class Product(Model):
         except ValueError:
             raise ProductValidationError('Product group needs to be an integer')
 
-        try:
-            self.barred = bool(self.barred)
-        except ValueError:
+        value = self.barred
+        if value == 1 or value == '1' or value == 'true' or value == 'True' or value is True:
+            self.barred = True
+        elif value == 0 or value == '0' or value == 'false' or value == 'False' or value is False:
+            self.barred = False
+        else:
             raise ProductValidationError('Barred needs to be a boolean')
 
 
