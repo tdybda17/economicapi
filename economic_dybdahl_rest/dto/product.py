@@ -95,6 +95,11 @@ class Product(Model):
         except ValueError:
             raise ProductValidationError('Product group needs to be an integer')
 
+        try:
+            self.barred = bool(self.barred)
+        except ValueError:
+            raise ProductValidationError('Barred needs to be a boolean')
+
 
 class ProductValidationError(RuntimeError):
     def __init__(self, *args: object) -> None:
