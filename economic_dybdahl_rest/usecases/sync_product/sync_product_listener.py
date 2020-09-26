@@ -13,7 +13,7 @@ class SyncProductListener(Listener):
         )
 
     # product created
-    def on_success(self):
+    def on_success(self, data=None):
         self.response = Response(
             status_code=200,
             data={'message': 'product updated'}
