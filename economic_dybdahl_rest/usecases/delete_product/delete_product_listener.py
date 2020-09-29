@@ -9,7 +9,7 @@ class DeleteProductListener(Listener):
     def on_success(self, data=None):
         self.response = Response(
             status_code=200,
-            data={'message': 'product updated'}
+            data={'message': 'product deleted'}
         )
 
     def on_does_not_exist(self):
