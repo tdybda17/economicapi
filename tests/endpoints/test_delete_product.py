@@ -19,7 +19,7 @@ class TestDeleteProductEndpoint(TestCase):
 
     def test_can_delete_product_success(self):
         content = self._delete_and_get_response(status_code=204)
-        expected = {'data': {'message': 'product updated'}, 'status_code': 200}
+        expected = {'data': {'message': 'product deleted'}, 'status_code': 200}
         self.assertDictEqual(expected, content)
 
     def test_when_unknown_error_Should_get_520(self):
