@@ -11,10 +11,21 @@ class BlockProductUseCase:
         response = get_api.get(product_number)
         if response.status_code == 200:
             product = json.loads(response.content.decode('utf-8'))
+            inventory = product['inventory']
+            try:
+                in_stock = int(inventory['inStock'])
+                ordered_from_suppliers = int(inventory['orderedFromSuppliers'])
+                ordered_by_customers = int(inventory['orderedByCustomers'])
+                print(in_stock)
+                print(ordered_by_customers)
+                print(ordered_from_suppliers)
+            except ValueError:
+                listener.on_unable_to_convert_to_int()
+                return
+
         elif response.status_code == 404:
             listener.on_does_not_exist()
             return
         else:
             listener.on_unknown_error(response.status_code, response.content)
             return
-
