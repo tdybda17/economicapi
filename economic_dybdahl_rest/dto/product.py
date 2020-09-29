@@ -46,14 +46,14 @@ class Product(Model):
     @staticmethod
     def from_dict(_dict):
         return Product(
-            bar_code=_dict['barCode'],
-            cost_price=_dict['costPrice'],
-            description=_dict['description'],
+            bar_code=_dict.get('barCode', ''),
+            cost_price=_dict.get('costPrice', 0),
+            description=_dict.get('description', ''),
             name=_dict['name'],
             product_group=ProductGroup.from_dict(_dict['productGroup']),
             product_number=_dict['productNumber'],
-            recommended_price=_dict['recommendedPrice'],
-            sales_price=_dict['salesPrice'],
+            recommended_price=_dict.get('recommendedPrice', 0),
+            sales_price=_dict.get('salesPrice', 0),
             barred=_dict['barred']
         )
 
