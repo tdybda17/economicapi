@@ -17,7 +17,10 @@ class GetCustomerUseCase:
             _json = json.loads(response.content.decode('utf-8'))
             customer = Customer.from_response(_json)
             delivery_locations_url = _json['deliveryLocations']
-            response = requests.get(url=delivery_locations_url)
+            response = requests.get(
+                url=delivery_locations_url,
+                headers=api.headers
+            )
             _json = json.loads(response.content.decode('utf-8'))
             collection = _json.get('collection', [])
             delivery_locations = []

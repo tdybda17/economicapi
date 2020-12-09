@@ -28,7 +28,7 @@ class DeliveryLocation(Model):
             address=_dict['address'],
             zip_code=_dict['postalCode'],
             city=_dict['city'],
-            country=_dict['country'],
+            country=_dict.get('country', None),
             sort_key=_dict['sortKey'],
             barred=_dict['barred']
         )
