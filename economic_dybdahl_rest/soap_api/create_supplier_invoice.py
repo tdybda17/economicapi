@@ -101,7 +101,6 @@ class CreateSupplierInvoiceAPI(EconomicSOAPApi):
             data_array = []
 
             for line in lines:
-                print(line)
                 temp = {
                             'Handle': {
                                 'InvoiceId': invoice_id,
