@@ -3,6 +3,7 @@ from typing import List
 
 from zeep import helpers
 
+from economic_dybdahl_rest.dto.supplier_invoice import SupplierInvoice
 from economic_dybdahl_rest.http.response import Response
 from economic_dybdahl_rest.soap_api._soap_api import EconomicSOAPApi
 from economic_dybdahl_rest.usecases._listener import Listener
@@ -47,7 +48,7 @@ class CreateSupplierInvoiceWithLinesAPIListener(Listener):
 
     def on_success(self, data=None):
         self.response = Response(
-            data={'id': helpers.serialize_object(data, dict)},
+            data={'invoice': data},
             status_code=200
         )
 
@@ -126,5 +127,11 @@ class CreateSupplierInvoiceAPI(EconomicSOAPApi):
         except Exception as e:
             listener.on_unknown_error(content=str(e), status_code=500)
             return
-        listener.on_success(response)
+        invoice = SupplierInvoice(
+            supplier_nr=creditor_nr,
+            comment=invoice_nr,
+            lines=lines,
+            invoice_id=invoice_id
+        )
+        listener.on_success(invoice.to_dict())
         return response

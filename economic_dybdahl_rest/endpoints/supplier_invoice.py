@@ -6,7 +6,8 @@ from rest_framework.views import APIView
 from economic_dybdahl_rest.soap_api.create_supplier_invoice import CreateSupplierInvoiceAPI, \
     CreateSupplierInvoiceAPIListener, CreateSupplierInvoiceAPIRequest, CreateSupplierInvoiceWithLinesAPIListener, \
     CreateSupplierInvoiceWithLinesAPIRequest, SupplierInvoiceLine
-from economic_dybdahl_rest.soap_api.get_supplier_invoice import GetSupplierInvoiceAPI, GetSupplierInvoiceAPIListener
+from economic_dybdahl_rest.soap_api.get_supplier_invoice import GetSupplierInvoiceAPI, GetSupplierInvoiceAPIListener, \
+    GetSupplierInvoiceWithLinesAPIListener
 
 
 class SupplierInvoiceEndpoint(APIView):
@@ -38,5 +39,11 @@ class SupplierInvoiceWithLinesEndpoint(APIView):
             request.data.get('invoice_nr', ''),
             request.data.get('lines', None)
         ), listener)
+        response = listener.get_response()
+        return JsonResponse(data=response.to_dict(), status=response.status_code)
+
+    def get(self, request, id):
+        listener = GetSupplierInvoiceWithLinesAPIListener()
+        GetSupplierInvoiceAPI().get_supplier_invoice_with_lines(id, listener)
         response = listener.get_response()
         return JsonResponse(data=response.to_dict(), status=response.status_code)
