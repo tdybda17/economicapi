@@ -18,7 +18,7 @@ class SupplierInvoiceEndpoint(APIView):
         listener = CreateSupplierInvoiceAPIListener()
         CreateSupplierInvoiceAPI().create_supplier_invoice(CreateSupplierInvoiceAPIRequest(
             creditor=request.data.get('creditor', None),
-            invoice_nr=request.data.get('invoice_nr', '')
+            invoice_nr=request.data.get('comment', '')
         ), listener=listener)
         response = listener.get_response()
         return JsonResponse(data=response.to_dict(), status=response.status_code)
@@ -37,7 +37,7 @@ class SupplierInvoiceWithLinesEndpoint(APIView):
         listener = CreateSupplierInvoiceWithLinesAPIListener()
         CreateSupplierInvoiceAPI().create_supplier_invoice_with_lines(CreateSupplierInvoiceWithLinesAPIRequest(
             request.data.get('creditor', None),
-            request.data.get('invoice_nr', ''),
+            request.data.get('comment', ''),
             request.data.get('lines', None)
         ), listener)
         response = listener.get_response()

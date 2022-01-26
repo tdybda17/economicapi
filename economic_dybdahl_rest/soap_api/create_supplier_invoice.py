@@ -25,7 +25,7 @@ class SupplierInvoiceLine:
 @dataclass
 class CreateSupplierInvoiceWithLinesAPIRequest:
     creditor: int
-    invoice_nr: str
+    comment: str
     lines: List[SupplierInvoiceLine]
 
 
@@ -85,7 +85,7 @@ class CreateSupplierInvoiceAPI(EconomicSOAPApi):
     def create_supplier_invoice_with_lines(self, request: CreateSupplierInvoiceWithLinesAPIRequest,
                                            listener=CreateSupplierInvoiceWithLinesAPIListener()):
         creditor_nr = request.creditor
-        invoice_nr = request.invoice_nr
+        invoice_nr = request.comment
         lines = request.lines
         try:
             invoice_id = self.client.service.CurrentSupplierInvoice_CreateFromData(data={
