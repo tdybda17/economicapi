@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from economic_dybdahl_rest.soap_api.create_supplier_invoice import CreateSupplierInvoiceAPI, \
@@ -11,7 +12,7 @@ from economic_dybdahl_rest.soap_api.get_supplier_invoice import GetSupplierInvoi
 
 
 class SupplierInvoiceEndpoint(APIView):
-    permission_classes = ()
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         listener = CreateSupplierInvoiceAPIListener()
@@ -30,7 +31,7 @@ class SupplierInvoiceEndpoint(APIView):
 
 
 class SupplierInvoiceWithLinesEndpoint(APIView):
-    permission_classes = ()
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         listener = CreateSupplierInvoiceWithLinesAPIListener()
