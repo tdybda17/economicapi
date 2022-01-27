@@ -9,26 +9,6 @@ from economic_dybdahl_rest.soap_api._soap_api import EconomicSOAPApi
 from economic_dybdahl_rest.usecases._listener import Listener
 
 
-@dataclass
-class CreateSupplierInvoiceAPIRequest:
-    creditor: int
-    invoice_nr: str
-
-
-@dataclass
-class SupplierInvoiceLine:
-    product_nr: str
-    amount: int
-    price: float
-
-
-@dataclass
-class CreateSupplierInvoiceWithLinesAPIRequest:
-    creditor: int
-    comment: str
-    lines: List[SupplierInvoiceLine]
-
-
 class CreateSupplierInvoiceAPIListener(Listener):
 
     def on_success(self, data=None):
@@ -61,10 +41,10 @@ class CreateSupplierInvoiceWithLinesAPIListener(Listener):
 
 class CreateSupplierInvoiceAPI(EconomicSOAPApi):
 
-    def create_supplier_invoice(self, request: CreateSupplierInvoiceAPIRequest,
+    def create_supplier_invoice(self, creditor_nr, invoice_nr,
                                 listener=CreateSupplierInvoiceAPIListener()):
-        creditor_nr = request.creditor
-        invoice_nr = request.invoice_nr
+        creditor_nr = creditor_nr
+        invoice_nr = invoice_nr
         try:
             response = self.client.service.CurrentSupplierInvoice_CreateFromData(data={
                 'Handle': {
@@ -82,11 +62,11 @@ class CreateSupplierInvoiceAPI(EconomicSOAPApi):
         listener.on_success(response)
         return response
 
-    def create_supplier_invoice_with_lines(self, request: CreateSupplierInvoiceWithLinesAPIRequest,
+    def create_supplier_invoice_with_lines(self, creditor_nr, invoice_nr, lines,
                                            listener=CreateSupplierInvoiceWithLinesAPIListener()):
-        creditor_nr = request.creditor
-        invoice_nr = request.comment
-        lines = request.lines
+        creditor_nr = creditor_nr
+        invoice_nr = invoice_nr
+        lines = lines
         try:
             invoice_id = self.client.service.CurrentSupplierInvoice_CreateFromData(data={
                 'Handle': {
@@ -103,21 +83,21 @@ class CreateSupplierInvoiceAPI(EconomicSOAPApi):
 
             for line in lines:
                 temp = {
-                            'Handle': {
-                                'InvoiceId': invoice_id,
-                                'Number': 1,
-                            },
-                            'InvoiceId': invoice_id,
-                            'Number': 1,
-                            'InvoiceHandle': {
-                                'Id': invoice_id
-                            },
-                            'ProductHandle': {
-                                'Number': line['product_nr']
-                            },
-                            'Quantity': line['amount'],
-                            'UnitPrice': line['price']
-                    }
+                    'Handle': {
+                        'InvoiceId': invoice_id,
+                        'Number': 1,
+                    },
+                    'InvoiceId': invoice_id,
+                    'Number': 1,
+                    'InvoiceHandle': {
+                        'Id': invoice_id
+                    },
+                    'ProductHandle': {
+                        'Number': line['product_nr']
+                    },
+                    'Quantity': line['amount'],
+                    'UnitPrice': line['price']
+                }
 
                 data_array.append(temp)
 

@@ -6,7 +6,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+import json
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -126,5 +126,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-X_APP_SECRET_TOKEN = 'CGeTq4txZDiWm5Gc9qBVh35NByIxnFWFM905CRkqH6g1'
-X_AGREEMENT_GRANT_TOKEN = 'GG1WMUosrPWVw4qh3P55pw6hSkIpuWvRcTfn0gf60T41'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+with open(os.path.join(BASE_DIR, 'credentials.json')) as json_file:
+    config = json.load(json_file)
+
+X_APP_SECRET_TOKEN = config.get('X_APP_SECRET_TOKEN', 'demo')
+X_AGREEMENT_GRANT_TOKEN = config.get('X_AGREEMENT_GRANT_TOKEN', 'demo')

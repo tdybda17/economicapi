@@ -3,7 +3,7 @@ from django.urls import path
 from economic_dybdahl_rest.endpoints.block_product import BlockProductEndpoint
 from economic_dybdahl_rest.endpoints.customers import CustomersEndpoint
 from economic_dybdahl_rest.endpoints.product import ProductEndpoint
-from economic_dybdahl_rest.endpoints.supplier_invoice import SupplierInvoiceEndpoint, SupplierInvoiceWithLinesEndpoint
+from economic_dybdahl_rest.endpoints.supplier_invoice import SupplierInvoiceWithLinesEndpoint
 
 urlpatterns = [
     path('v1/product/', ProductEndpoint.as_view(), name='sync product endpoint'),
