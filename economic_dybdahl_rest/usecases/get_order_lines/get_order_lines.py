@@ -39,16 +39,27 @@ class GetDraftOrderLinesUseCase:
             draft_orders_numbers = []
             data = []
 
-            GetDraftOrderLinesUseCase.get_all_order_drafts_order_numbers(draft_orders_numbers)
+            GetDraftOrderLinesUseCase.get_all_order_drafts_order_numbers(draft_orders_numbers=draft_orders_numbers)
 
             draft_orders_lines = []
             product_numbers = []
-            GetDraftOrderLinesUseCase.get_all_draft_orders_lines(draft_orders_numbers, draft_orders_lines, data)
-            GetDraftOrderLinesUseCase.get_all_product_numbers_from_lines(draft_orders_lines, product_numbers)
 
-            products = GetDraftOrderLinesUseCase.get_all_products_to_list(product_numbers)
+            GetDraftOrderLinesUseCase.get_all_draft_orders_lines(
+                draft_orders_numbers=draft_orders_numbers,
+                lines=draft_orders_lines,
+                data=data
+            )
 
-            GetDraftOrderLinesUseCase.find_and_map_available_to_product(data, products)
+            GetDraftOrderLinesUseCase.get_all_product_numbers_from_lines(
+                lines=draft_orders_lines,
+                product_numbers=product_numbers
+            )
+
+            products = GetDraftOrderLinesUseCase.get_all_products_to_list(product_numbers=product_numbers)
+
+            GetDraftOrderLinesUseCase.find_and_map_available_to_product(
+                data=data, products=products
+            )
 
         except DoesNotExistException as e:
             listener.on_does_not_exist(str(e))
