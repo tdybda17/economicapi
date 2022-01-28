@@ -87,3 +87,15 @@ class GetSupplierInvoiceAPI(EconomicSOAPApi):
         )
         listener.on_success(invoice.to_dict(lines_has_line_number=True))
         return invoice.to_dict()
+
+    def get_supplier_invoice_all_ids(self):
+        id_handles = self.client.service.CurrentSupplierInvoice_GetAll()
+        data = []
+        for id_handle in id_handles:
+            data.append({
+                'id': id_handle.Id
+            })
+        response = {
+            'supplier_invoice_ids': data
+        }
+        return response

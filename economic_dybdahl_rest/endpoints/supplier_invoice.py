@@ -28,3 +28,11 @@ class SupplierInvoiceWithLinesEndpoint(APIView):
         GetSupplierInvoiceAPI().get_supplier_invoice_with_lines(id, listener)
         response = listener.get_response()
         return JsonResponse(data=response.to_dict(), status=response.status_code)
+
+
+class SupplierInvoiceAllEndpoint(APIView):
+    permission_classes = ()
+
+    def get(self, request):
+        response = GetSupplierInvoiceAPI().get_supplier_invoice_all_ids()
+        return JsonResponse(data=response, status=200)
