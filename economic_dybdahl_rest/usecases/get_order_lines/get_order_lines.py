@@ -21,13 +21,17 @@ class GetDraftOrderLinesListener(Listener):
     def on_unknown_error(self, error):
         self.response = Response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
-            data=error
+            data={
+                'detail': error
+            }
         )
 
     def on_does_not_exist(self, error):
         self.response = Response(
             status_code=HTTPStatus.NOT_FOUND,
-            data=error
+            data={
+                'detail': error
+            }
         )
 
 
@@ -125,30 +129,34 @@ class GetDraftOrderLinesUseCase:
     @staticmethod
     def get_all_products_to_list(product_numbers):
         products = []
-        get_products_api = GetProducts()
         product_numbers_no_duplicates = list(dict.fromkeys(product_numbers))
         amount_left = len(product_numbers_no_duplicates)
         while amount_left > 0:
+            get_products_api = GetProducts()
             products_to_get = []
             for count, product_number in enumerate(product_numbers_no_duplicates):
                 if count > 19:
                     break
                 products_to_get.append(product_number)
+            product_numbers_no_duplicates = [item for item in product_numbers_no_duplicates if item not in products_to_get]
 
             response = get_products_api.get(products_to_get)
             GetDraftOrderLinesUseCase.check_status_is_succeeded(response)
             json_response = response.json()
-            products.append(json_response['collection'])
-            amount_left -= 20
+
+            products.append(json_response['collection']) if len(products) < 1 else [products].append(json_response['collection'])
+
+            amount_left = len(product_numbers_no_duplicates)
+
         [products] = products
         return products
 
     @staticmethod
     def check_status_is_succeeded(response):
         if response.status_code == HTTPStatus.NOT_FOUND:
-            raise DoesNotExistException(response)
+            raise DoesNotExistException(response.content)
         if not response.ok:
-            raise OnUnknownErrorException(response)
+            raise OnUnknownErrorException(response.content)
 
     @staticmethod
     def find_and_map_available_to_product(data, products):
