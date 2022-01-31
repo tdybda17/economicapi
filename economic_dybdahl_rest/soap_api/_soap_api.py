@@ -14,10 +14,10 @@ class EconomicSOAPApi:
     session = Session()
     transport = Transport(session=session)
     client = zeep.Client(wsdl=wsdl, settings=settings, transport=transport)
-    client.service.ConnectWithToken(
-        token=X_AGREEMENT_GRANT_TOKEN,
-        appToken=X_APP_SECRET_TOKEN
-    )
+
+    def __init__(self) -> None:
+        self.login()
+        super().__init__()
 
     def login(self):
         self.client.service.ConnectWithToken(

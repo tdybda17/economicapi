@@ -40,6 +40,9 @@ class GetSupplierInvoiceWithLinesAPIListener(Listener):
 
 class GetSupplierInvoiceAPI(EconomicSOAPApi):
 
+    def __init__(self) -> None:
+        super().__init__()
+
     def get_supplier_invoice(self, id, listener=GetSupplierInvoiceAPIListener()):
         try:
             response = self.client.service.CurrentSupplierInvoice_GetData(entityHandle={

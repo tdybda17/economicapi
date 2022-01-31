@@ -37,6 +37,9 @@ class CreateSupplierInvoiceWithLinesAPIListener(Listener):
 
 class CreateSupplierInvoiceAPI(EconomicSOAPApi):
 
+    def __init__(self) -> None:
+        super().__init__()
+
     def create_supplier_invoice(self, creditor_nr, invoice_nr,
                                 listener=CreateSupplierInvoiceAPIListener()):
         creditor_nr = creditor_nr
