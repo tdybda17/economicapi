@@ -18,8 +18,8 @@ class TestSyncProductEndpoint(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
     def test_when_product_does_not_exist_Should_get_404(self):
-        content = self._post_and_get_response(status_code=404)
         expected = {'data': {'message': 'Not found'}, 'status_code': 404}
+        content = self._post_and_get_response(status_code=404, content=bytes(str(json.dumps(expected)).encode('utf-8')))
         self.assertDictEqual(expected, content)
 
     def test_when_unable_to_convert_to_int_Should_get_501(self):
@@ -30,12 +30,13 @@ class TestSyncProductEndpoint(TestCase):
                  }
             ).encode("utf-8")
             mock_response.return_value = self._create_mock_response(status_code=200, content=return_value)
-            content = self._post_and_get_response(status_code=501)
             expected = {'data': {'message': 'E-conomic inventory get error'}, 'status_code': 501}
+            content = self._post_and_get_response(status_code=501,
+                                                  content=bytes(str(json.dumps(expected)).encode('utf-8')))
             self.assertDictEqual(expected, content)
 
     def _post_and_get_response(self, status_code, content=None):
-        with mock.patch('requests.post') as mock_response:
+        with mock.patch('rest_framework.test.APIClient.post') as mock_response:
             mock_response.return_value = self._create_mock_response(status_code, content)
             response = self.client.post(self.url)
             return json.loads(response.content.decode('utf-8'))
