@@ -4,6 +4,7 @@ from http import HTTPStatus
 from economic_dybdahl_rest.api.get_draft_order import GetDraftOrderAPI
 from economic_dybdahl_rest.api.get_draft_orders import GetDraftOrdersAPI
 from economic_dybdahl_rest.api.get_products import GetProducts
+from economic_dybdahl_rest.dto.draft_order_line import DraftOrderLine
 from economic_dybdahl_rest.http.response import Response
 from economic_dybdahl_rest.usecases._listener import Listener
 
@@ -40,28 +41,18 @@ class GetDraftOrderLinesUseCase:
     @staticmethod
     def get(listener=None):
         try:
-            order_lines = []
-
             draft_orders_numbers = get_all_order_drafts_order_numbers()
 
-            draft_orders_lines = []
-            product_numbers = []
-
-            get_all_draft_orders_lines(
-                draft_orders_numbers=draft_orders_numbers,
-                lines=draft_orders_lines,
-                data=order_lines
+            request_draft_orders_lines, model_draft_orders_lines = get_all_draft_orders_request_and_model_lines(
+                draft_orders_numbers=draft_orders_numbers
             )
 
-            get_all_product_numbers_from_lines(
-                lines=draft_orders_lines,
-                product_numbers=product_numbers
-            )
+            product_numbers = get_all_product_numbers_from_lines(lines=request_draft_orders_lines)
 
             products = get_all_products_to_list(product_numbers=product_numbers)
 
             find_and_map_available_to_product(
-                data=order_lines, products=products
+                model_draft_order_lines=model_draft_orders_lines, products=products
             )
 
         except DoesNotExistException as e:
@@ -71,8 +62,10 @@ class GetDraftOrderLinesUseCase:
             listener.on_unknown_error(str(e))
             return
 
-        listener.on_success(order_lines)
-        return order_lines
+        draft_order_lines = DraftOrderLine.to_list_of_dicts_from_multiple(model_draft_orders_lines)
+
+        listener.on_success(draft_order_lines)
+        return draft_order_lines
 
 
 def get_all_order_drafts_order_numbers():
@@ -106,26 +99,32 @@ def find_and_add_order_numbers(draft_orders, order_numbers_list):
         order_numbers_list.append(order_number)
 
 
-def get_all_draft_orders_lines(draft_orders_numbers, lines, data):
+def get_all_draft_orders_request_and_model_lines(draft_orders_numbers):
     get_draft_order_api = GetDraftOrderAPI()
+    model_draft_order_lines = []
+    request_draft_order_lines = []
 
     for draft_order_number in draft_orders_numbers:
         response = get_draft_order_api.get(draft_order_number)
         check_status_is_succeeded(response)
         draft_order_json = response.json()
         for line in draft_order_json['lines']:
-            lines.append(line)
-            data.append({
-                'order_number': draft_order_number,
-                'product_economic_number': line['product']['productNumber'],
-                'product_amount': line['quantity']
-            })
+            request_draft_order_lines.append(line)
+            model_draft_order_lines.append(DraftOrderLine(
+                order_number=draft_order_number,
+                economic_number=line['product']['productNumber'],
+                amount=line['quantity'],
+                available=None
+            ))
+    return request_draft_order_lines, model_draft_order_lines
 
 
-def get_all_product_numbers_from_lines(lines, product_numbers):
+def get_all_product_numbers_from_lines(lines):
+    product_numbers = []
     for line in lines:
         product_number = line['product']['productNumber']
         product_numbers.append(product_number)
+    return product_numbers
 
 
 def get_all_products_to_list(product_numbers):
@@ -152,11 +151,11 @@ def get_all_products_to_list(product_numbers):
     return products
 
 
-def find_and_map_available_to_product(data, products):
-    for d in data:
+def find_and_map_available_to_product(model_draft_order_lines, products):
+    for draft_order_line in model_draft_order_lines:
         for product in products:
-            if d['product_economic_number'] == product['productNumber']:
-                d['available'] = product['inventory']['available']
+            if draft_order_line.economic_number == product['productNumber']:
+                draft_order_line.available = product['inventory']['available']
 
 
 def check_status_is_succeeded(response):
