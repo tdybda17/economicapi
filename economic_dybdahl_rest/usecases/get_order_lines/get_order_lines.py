@@ -40,29 +40,28 @@ class GetDraftOrderLinesUseCase:
     @staticmethod
     def get(listener=None):
         try:
-            draft_orders_numbers = []
-            data = []
+            order_lines = []
 
-            GetDraftOrderLinesUseCase.get_all_order_drafts_order_numbers(draft_orders_numbers=draft_orders_numbers)
+            draft_orders_numbers = get_all_order_drafts_order_numbers()
 
             draft_orders_lines = []
             product_numbers = []
 
-            GetDraftOrderLinesUseCase.get_all_draft_orders_lines(
+            get_all_draft_orders_lines(
                 draft_orders_numbers=draft_orders_numbers,
                 lines=draft_orders_lines,
-                data=data
+                data=order_lines
             )
 
-            GetDraftOrderLinesUseCase.get_all_product_numbers_from_lines(
+            get_all_product_numbers_from_lines(
                 lines=draft_orders_lines,
                 product_numbers=product_numbers
             )
 
-            products = GetDraftOrderLinesUseCase.get_all_products_to_list(product_numbers=product_numbers)
+            products = get_all_products_to_list(product_numbers=product_numbers)
 
-            GetDraftOrderLinesUseCase.find_and_map_available_to_product(
-                data=data, products=products
+            find_and_map_available_to_product(
+                data=order_lines, products=products
             )
 
         except DoesNotExistException as e:
@@ -72,98 +71,99 @@ class GetDraftOrderLinesUseCase:
             listener.on_unknown_error(str(e))
             return
 
-        listener.on_success(data)
-        return data
+        listener.on_success(order_lines)
+        return order_lines
 
-    @staticmethod
-    def find_and_add_order_numbers(draft_orders, order_numbers_list):
-        for draft_order in draft_orders:
-            order_number = draft_order['orderNumber']
-            order_numbers_list.append(order_number)
 
-    @staticmethod
-    def get_all_order_drafts_order_numbers(draft_orders_numbers):
-        get_draft_orders_api = GetDraftOrdersAPI()
-        next_page = None
-        while True:
-            draft_orders_response = get_draft_orders_api.get(next_page)
-            GetDraftOrderLinesUseCase.check_status_is_succeeded(draft_orders_response)
+def get_all_order_drafts_order_numbers():
+    draft_orders_numbers = []
+    get_draft_orders_api = GetDraftOrdersAPI()
+    next_page = None
+    while True:
+        draft_orders_response = get_draft_orders_api.get(next_page)
+        check_status_is_succeeded(draft_orders_response)
 
-            draft_orders_json = draft_orders_response.json()
-            pagination = draft_orders_json['pagination']
-            draft_orders = draft_orders_json['collection']
+        draft_orders_json = draft_orders_response.json()
+        pagination = draft_orders_json['pagination']
+        draft_orders = draft_orders_json['collection']
 
-            GetDraftOrderLinesUseCase.find_and_add_order_numbers(draft_orders, draft_orders_numbers)
+        find_and_add_order_numbers(draft_orders, draft_orders_numbers)
 
-            if len(draft_orders_numbers) > pagination['results']:
+        if len(draft_orders_numbers) > pagination['results']:
+            break
+
+        try:
+            next_page = pagination['nextPage']
+        except KeyError:
+            break
+
+    return draft_orders_numbers
+
+
+def find_and_add_order_numbers(draft_orders, order_numbers_list):
+    for draft_order in draft_orders:
+        order_number = draft_order['orderNumber']
+        order_numbers_list.append(order_number)
+
+
+def get_all_draft_orders_lines(draft_orders_numbers, lines, data):
+    get_draft_order_api = GetDraftOrderAPI()
+
+    for draft_order_number in draft_orders_numbers:
+        response = get_draft_order_api.get(draft_order_number)
+        check_status_is_succeeded(response)
+        draft_order_json = response.json()
+        for line in draft_order_json['lines']:
+            lines.append(line)
+            data.append({
+                'order_number': draft_order_number,
+                'product_economic_number': line['product']['productNumber'],
+                'product_amount': line['quantity']
+            })
+
+
+def get_all_product_numbers_from_lines(lines, product_numbers):
+    for line in lines:
+        product_number = line['product']['productNumber']
+        product_numbers.append(product_number)
+
+
+def get_all_products_to_list(product_numbers):
+    products = []
+    product_numbers_no_duplicates = set(product_numbers)
+    amount_left = len(product_numbers_no_duplicates)
+    while amount_left > 0:
+        get_products_api = GetProducts()
+        products_to_get = []
+        for count, product_number in enumerate(product_numbers_no_duplicates):
+            if count > 19:
                 break
+            products_to_get.append(product_number)
+        product_numbers_no_duplicates = [item for item in product_numbers_no_duplicates if item not in products_to_get]
 
-            try:
-                next_page = pagination['nextPage']
-            except KeyError:
-                break
+        response = get_products_api.get(products_to_get)
+        check_status_is_succeeded(response)
+        json_response = response.json()
 
-    @staticmethod
-    def get_all_draft_orders_lines(draft_orders_numbers, lines, data):
-        get_draft_order_api = GetDraftOrderAPI()
+        products.extend(json_response['collection'])
 
-        for draft_order_number in draft_orders_numbers:
-            response = get_draft_order_api.get(draft_order_number)
-            GetDraftOrderLinesUseCase.check_status_is_succeeded(response)
-            draft_order_json = response.json()
-            for line in draft_order_json['lines']:
-                lines.append(line)
-                data.append({
-                    'order_number': draft_order_number,
-                    'product_economic_number': line['product']['productNumber'],
-                    'product_amount': line['quantity']
-                })
-            time.sleep(2)
-
-    @staticmethod
-    def get_all_product_numbers_from_lines(lines, product_numbers):
-        for line in lines:
-            product_number = line['product']['productNumber']
-            product_numbers.append(product_number)
-
-    @staticmethod
-    def get_all_products_to_list(product_numbers):
-        products = []
-        product_numbers_no_duplicates = list(dict.fromkeys(product_numbers))
         amount_left = len(product_numbers_no_duplicates)
-        while amount_left > 0:
-            get_products_api = GetProducts()
-            products_to_get = []
-            for count, product_number in enumerate(product_numbers_no_duplicates):
-                if count > 19:
-                    break
-                products_to_get.append(product_number)
-            product_numbers_no_duplicates = [item for item in product_numbers_no_duplicates if item not in products_to_get]
 
-            response = get_products_api.get(products_to_get)
-            GetDraftOrderLinesUseCase.check_status_is_succeeded(response)
-            json_response = response.json()
+    return products
 
-            products.append(json_response['collection']) if len(products) < 1 else [products].append(json_response['collection'])
 
-            amount_left = len(product_numbers_no_duplicates)
+def find_and_map_available_to_product(data, products):
+    for d in data:
+        for product in products:
+            if d['product_economic_number'] == product['productNumber']:
+                d['available'] = product['inventory']['available']
 
-        [products] = products
-        return products
 
-    @staticmethod
-    def check_status_is_succeeded(response):
-        if response.status_code == HTTPStatus.NOT_FOUND:
-            raise DoesNotExistException(response.content)
-        if not response.ok:
-            raise OnUnknownErrorException(response.content)
-
-    @staticmethod
-    def find_and_map_available_to_product(data, products):
-        for d in data:
-            for product in products:
-                if d['product_economic_number'] == product['productNumber']:
-                    d['available'] = product['inventory']['available']
+def check_status_is_succeeded(response):
+    if response.status_code == HTTPStatus.NOT_FOUND:
+        raise DoesNotExistException(response.content)
+    if not response.ok:
+        raise OnUnknownErrorException(response.content)
 
 
 class DoesNotExistException(RuntimeError):

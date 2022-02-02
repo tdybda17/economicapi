@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from economic_dybdahl_rest.usecases.get_order_lines.get_order_lines import GetDraftOrderLinesUseCase, \
@@ -6,7 +7,7 @@ from economic_dybdahl_rest.usecases.get_order_lines.get_order_lines import GetDr
 
 
 class DraftOrdersLinesEndpoint(APIView):
-    permission_classes = ()
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request):
         listener = GetDraftOrderLinesListener()

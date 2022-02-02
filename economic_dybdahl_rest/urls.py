@@ -16,7 +16,7 @@ urlpatterns = [
     path('v1/supplier/invoice/<int:id>/', SupplierInvoiceWithLinesEndpoint.as_view(),
          name='supplier invoice with lines'),
     path('v1/supplier/invoice/all/', SupplierInvoiceAllEndpoint.as_view(),
-         name='supplier invoice with lines')
+         name='supplier invoice with lines'),
     path('v1/customers/<str:customer_number>/', CustomersEndpoint.as_view(), name='get customer endpoint'),
     path('v1/orders/drafts/lines/', DraftOrdersLinesEndpoint.as_view(), name='get all draft orders lines')
 ]
