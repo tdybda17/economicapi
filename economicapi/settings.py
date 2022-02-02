@@ -6,7 +6,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+import json
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -76,7 +76,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'economicapi.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -86,7 +85,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -106,7 +104,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -120,11 +117,17 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
 
-X_APP_SECRET_TOKEN = 'CGeTq4txZDiWm5Gc9qBVh35NByIxnFWFM905CRkqH6g1'
-X_AGREEMENT_GRANT_TOKEN = 'GG1WMUosrPWVw4qh3P55pw6hSkIpuWvRcTfn0gf60T41'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+try:
+    with open(os.path.join(BASE_DIR, 'credentials.json')) as json_file:
+        config = json.load(json_file)
+except:
+    config = dict()
+
+X_APP_SECRET_TOKEN = config.get('X_APP_SECRET_TOKEN', 'demo')
+X_AGREEMENT_GRANT_TOKEN = config.get('X_AGREEMENT_GRANT_TOKEN', 'demo')
