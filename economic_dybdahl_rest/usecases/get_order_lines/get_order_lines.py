@@ -15,7 +15,7 @@ class GetDraftOrderLinesListener(Listener):
         self.response = Response(
             status_code=HTTPStatus.OK,
             data={
-                'products': data
+                'lines': data
             }
         )
 
@@ -51,7 +51,7 @@ class GetDraftOrderLinesUseCase:
 
             products = get_all_products_to_list(product_numbers=product_numbers)
 
-            find_and_map_available_to_product(
+            find_and_map_available_to_lines(
                 model_draft_order_lines=model_draft_orders_lines, products=products
             )
 
@@ -151,7 +151,7 @@ def get_all_products_to_list(product_numbers):
     return products
 
 
-def find_and_map_available_to_product(model_draft_order_lines, products):
+def find_and_map_available_to_lines(model_draft_order_lines, products):
     for draft_order_line in model_draft_order_lines:
         for product in products:
             if draft_order_line.economic_number == product['productNumber']:
