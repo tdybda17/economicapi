@@ -35,7 +35,4 @@ class DraftOrderLine(Model):
 
     @staticmethod
     def to_list_of_dicts_from_multiple(draft_order_lines):
-        list_of_dicts = []
-        for draft_order_line in draft_order_lines:
-            list_of_dicts.append(draft_order_line.to_dict())
-        return list_of_dicts
+        return [line.to_dict() for line in draft_order_lines]
