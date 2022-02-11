@@ -31,7 +31,7 @@ class SupplierInvoiceWithLinesEndpoint(APIView):
 
 
 class SupplierInvoiceAllEndpoint(APIView):
-    permission_classes = ()
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request):
         response = GetSupplierInvoiceAPI().get_supplier_invoice_all_ids()
