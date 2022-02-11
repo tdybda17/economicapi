@@ -108,7 +108,7 @@ def get_all_draft_orders_request_and_model_lines(draft_orders_numbers):
         response = get_draft_order_api.get(draft_order_number)
         check_status_is_succeeded(response)
         draft_order_json = response.json()
-        for line in draft_order_json['lines']:
+        for line in [a for a in draft_order_json['lines'] if 'product' in a]:
             request_draft_order_lines.append(line)
             model_draft_order_lines.append(DraftOrderLine(
                 order_number=draft_order_number,
