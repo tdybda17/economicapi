@@ -1,5 +1,6 @@
 from economic_dybdahl_rest.dto._model import Model
 from datetime import date as _date
+import json
 
 
 class Order(Model):
