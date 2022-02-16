@@ -18,3 +18,11 @@ class GetProducts(EconomicApi):
             headers=self.headers
         )
         return response
+
+    def get_next_page(self, next_page):
+        response = requests.get(
+            url=next_page,
+            headers=self.headers
+        )
+        return response
+
