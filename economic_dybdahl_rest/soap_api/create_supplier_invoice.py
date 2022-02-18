@@ -1,4 +1,4 @@
-
+from economic_dybdahl_rest.api.get_products import GetProducts
 from economic_dybdahl_rest.dto.supplier_invoice import SupplierInvoice
 from economic_dybdahl_rest.http.response import Response
 from economic_dybdahl_rest.soap_api._soap_api import EconomicSOAPApi
@@ -34,6 +34,12 @@ class CreateSupplierInvoiceWithLinesAPIListener(Listener):
             status_code=status_code
         )
 
+    def on_product_does_not_exist(self, product):
+        self.response = Response(
+            data={'message': 'Produkt ' + str(product) + ' Eksistere ikke i economic, eller er uden lagerstyring'},
+            status_code=400
+        )
+
 
 class CreateSupplierInvoiceAPI(EconomicSOAPApi):
 
@@ -66,6 +72,18 @@ class CreateSupplierInvoiceAPI(EconomicSOAPApi):
         creditor_nr = creditor_nr
         invoice_nr = invoice_nr
         lines = lines
+
+        try:
+            products_numbers = get_product_numbers_in_economic_from_lines(lines)
+        except UnknownErrorException as e:
+            listener.on_unknown_error(500, str(e))
+            return
+
+        for line in lines:
+            if str(line['product_nr']) not in products_numbers:
+                listener.on_product_does_not_exist(line['product_nr'])
+                return
+
         try:
             invoice_id = self.client.service.CurrentSupplierInvoice_CreateFromData(data={
                 'Handle': {
@@ -114,3 +132,36 @@ class CreateSupplierInvoiceAPI(EconomicSOAPApi):
         )
         listener.on_success(invoice.to_dict())
         return response
+
+
+def get_product_numbers_in_economic_from_lines(lines):
+    lines_product_numbers = []
+    for line in lines:
+        lines_product_numbers.append(str(line['product_nr']))
+
+    products = []
+    get_products_api = GetProducts()
+    response = get_products_api.get(lines_product_numbers)
+    if response.status_code > 300:
+        raise UnknownErrorException(str(response.status_code) + ': ' + str(response.content))
+    products.extend(response.json()['collection'])
+    pagination = response.json()['pagination']
+
+    while 'nextPage' in pagination:
+        response = get_products_api.get_next_page(pagination['nextPage'])
+        if response.status_code > 300:
+            raise UnknownErrorException(str(response.status_code) + ': ' + str(response.content))
+        products.extend(response.json()['collection'])
+        pagination = response.json()['pagination']
+
+    product_numbers = []
+    for product in products:
+        if 'inventoryEnabled' not in product['productGroup']:
+            continue
+        product_numbers.append(product['productNumber'])
+
+    return product_numbers
+
+
+class UnknownErrorException(RuntimeError):
+    pass

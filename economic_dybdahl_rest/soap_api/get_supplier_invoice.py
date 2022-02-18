@@ -92,7 +92,7 @@ class GetSupplierInvoiceAPI(EconomicSOAPApi):
         return invoice.to_dict()
 
     def get_supplier_invoice_all_ids(self):
-        id_handles = self.client.service.CurrentSupplierInvoice_GetAll()
+        id_handles = self.client.service.CurrentSupplierInvoice_GetAll() or []
         data = []
         for id_handle in id_handles:
             data.append({
