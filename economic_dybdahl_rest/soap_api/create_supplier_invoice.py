@@ -40,6 +40,12 @@ class CreateSupplierInvoiceWithLinesAPIListener(Listener):
             status_code=400
         )
 
+    def on_no_product_lines(self):
+        self.response = Response(
+            data={'message': 'Der blev ikke medsendt nogle produkt linjer til vareleverandør fakturaen'},
+            status_code=400
+        )
+
 
 class CreateSupplierInvoiceAPI(EconomicSOAPApi):
 
@@ -72,6 +78,10 @@ class CreateSupplierInvoiceAPI(EconomicSOAPApi):
         creditor_nr = creditor_nr
         invoice_nr = invoice_nr
         lines = lines
+
+        if len(lines) < 1:
+            listener.on_no_product_lines()
+            return
 
         try:
             products_numbers = get_product_numbers_in_economic_from_lines(lines)
