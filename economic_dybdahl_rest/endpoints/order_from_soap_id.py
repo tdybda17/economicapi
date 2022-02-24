@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from economic_dybdahl_rest.usecases.get_order.get_order import GetOrderListener, GetOrderUseCase
 
 
-class OrderFromWebhookIdEndpoint(APIView):
+class OrderFromSoapIDEndpoint(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, id):

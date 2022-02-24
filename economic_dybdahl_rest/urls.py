@@ -3,7 +3,7 @@ from django.urls import path
 from economic_dybdahl_rest.endpoints.block_product import BlockProductEndpoint
 from economic_dybdahl_rest.endpoints.customers import CustomersEndpoint
 from economic_dybdahl_rest.endpoints.draft_orders_lines import DraftOrdersLinesEndpoint
-from economic_dybdahl_rest.endpoints.order_from_webhook import OrderFromWebhookIdEndpoint
+from economic_dybdahl_rest.endpoints.order_from_soap_id import OrderFromSoapIDEndpoint
 from economic_dybdahl_rest.endpoints.product import ProductEndpoint
 from economic_dybdahl_rest.endpoints.supplier_invoice import SupplierInvoiceWithLinesEndpoint, \
     SupplierInvoiceAllEndpoint
@@ -20,5 +20,5 @@ urlpatterns = [
          name='supplier invoice with lines'),
     path('v1/customers/<str:customer_number>/', CustomersEndpoint.as_view(), name='get customer endpoint'),
     path('v1/orders/drafts/lines/', DraftOrdersLinesEndpoint.as_view(), name='get all draft orders lines'),
-    path('v1/orders/<int:id>/', OrderFromWebhookIdEndpoint.as_view(), name='get order from a webhook id'),
+    path('v1/orders/<int:id>/', OrderFromSoapIDEndpoint.as_view(), name='get order from a webhook id'),
 ]
