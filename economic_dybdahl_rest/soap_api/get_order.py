@@ -11,3 +11,7 @@ class GetOrderSOAPAPI(EconomicSOAPApi):
             'Id': id
         })
         return response
+
+    def get_orders(self, entity_handles):
+        response = self.client.service.Order_GetDataArray(entityHandles=entity_handles)
+        return response

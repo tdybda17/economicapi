@@ -20,5 +20,5 @@ urlpatterns = [
          name='supplier invoice with lines'),
     path('v1/customers/<str:customer_number>/', CustomersEndpoint.as_view(), name='get customer endpoint'),
     path('v1/orders/drafts/lines/', DraftOrdersLinesEndpoint.as_view(), name='get all draft orders lines'),
-    path('v1/orders/<int:id>/', OrderFromSoapIDEndpoint.as_view(), name='get order from a webhook id'),
+    path('v1/orders/<int:id>/', OrderFromSoapIDEndpoint.as_view(), name='get order from a soap id or soap id list'),
 ]

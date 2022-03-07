@@ -15,3 +15,19 @@ class GetDraftOrdersAPI(EconomicApi):
             headers=self.headers
         )
         return response
+
+
+class GetDraftOrdersInAPI(EconomicApi):
+    path = 'orders/drafts?filter=orderNumber$in:'
+
+    def __init__(self):
+        super().__init__(self.path)
+
+    def get(self, order_numbers: list, url=None):
+        _in = ",".join(order_numbers)
+        self.ECONOMIC_URL += '[' + _in + ']'
+        response = requests.get(
+            url=self.ECONOMIC_URL if not url else url,
+            headers=self.headers
+        )
+        return response
