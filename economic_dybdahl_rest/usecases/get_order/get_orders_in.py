@@ -1,7 +1,8 @@
 import json
 from http import HTTPStatus
 
-from economic_dybdahl_rest.api.get_draft_orders import GetDraftOrdersInAPI
+from economic_dybdahl_rest.api.get_draft_order import GetDraftOrderAPI
+from economic_dybdahl_rest.api.get_draft_orders import GetDraftOrdersInAPI, GetDraftOrdersAPI
 from economic_dybdahl_rest.http.response import Response
 from economic_dybdahl_rest.soap_api.get_order import GetOrderSOAPAPI
 from economic_dybdahl_rest.usecases._listener import Listener
@@ -13,7 +14,7 @@ class GetOrdersInListener(Listener):
         self.response = Response(
             status_code=HTTPStatus.OK,
             data={
-                'Orders': json.loads(data.decode("utf-8"))
+                'orders': data
             }
         )
 
@@ -23,52 +24,54 @@ class GetOrdersInListener(Listener):
             status_code=status_code
         )
 
-    def on_empty_soap_ids_list(self):
-        self.response = Response(
-            data={'message': 'Der blev ikke medsendt nogle soap ids'},
-            status_code=HTTPStatus.BAD_REQUEST
-        )
-
 
 class GetOrdersInUseCase:
 
     @staticmethod
-    def get(soap_ids: list, listener=None):
-        if not soap_ids:
-            listener.on_empty_soap_ids_list()
-            return
+    def get(soap_ids: list = None, listener=None):
 
         data_array = []
         order_numbers = []
         orders = []
         try:
-            for soap_id in soap_ids:
-                temp = {
-                    'OrderHandle': {
-                        'Id': soap_id
+            if soap_ids:
+                for soap_id in soap_ids:
+                    temp = {
+                            'Id': soap_id
                     }
-                }
-                data_array.append(temp)
+                    data_array.append(temp)
 
-            soap_order_response = GetOrderSOAPAPI().get_orders(data_array)
-            for soap in soap_order_response:
-                order_numbers.append(soap.Number)
+                soap_order_response = GetOrderSOAPAPI().get_orders(data_array)
+                for soap in soap_order_response:
+                    order_numbers.append(str(soap.Number))
+            else:
+                next_page = None
+                while True:
+                    draft_orders_response = GetDraftOrdersAPI().get(next_page)
 
-            next_page = None
-            while True:
-                rest_response = GetDraftOrdersInAPI().get(order_numbers, next_page)
+                    if not draft_orders_response.ok:
+                        listener.on_unknown_error(content=json.loads(draft_orders_response.content.decode("utf-8")),
+                                                  status_code=draft_orders_response.status_code)
+                        return
+
+                    for draft_order in draft_orders_response.json()['collection']:
+                        order_numbers.append(draft_order['orderNumber'])
+
+                    try:
+                        next_page = draft_orders_response.json()['pagination']['nextPage']
+                    except KeyError:
+                        break
+
+
+            for order_number in order_numbers:
+                rest_response = GetDraftOrderAPI().get(order_number)
 
                 if not rest_response.ok:
                     listener.on_unknown_error(content=json.loads(rest_response.content.decode("utf-8")),
                                               status_code=rest_response.status_code)
                     return
 
-                orders.extend(rest_response.json()['collection'])
-
-                try:
-                    next_page = rest_response.json()['pagination']['nextPage']
-                except KeyError:
-                    break
+                orders.append(rest_response.json())
 
             listener.on_success(orders)
             return

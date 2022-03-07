@@ -8,12 +8,12 @@ from economic_dybdahl_rest.usecases.get_order.soap_ids_string_splitter import sp
 
 
 class OrderFromSoapIDEndpoint(APIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = ()
 
-    def get(self, request, id=None):
-        if id:
+    def get(self, request, soap_id=None):
+        if soap_id:
             listener = GetOrderListener()
-            GetOrderUseCase.get(id, listener)
+            GetOrderUseCase.get(soap_id, listener)
             response = listener.get_response()
             return JsonResponse(
                 data=response.to_dict(),
@@ -21,15 +21,23 @@ class OrderFromSoapIDEndpoint(APIView):
             )
         else:
             soap_ids = request.GET.get('in', None)
-            trimmed = split_soap_id_string(soap_ids)
-            if not trimmed:
-                raise Http404()
-            listener = GetOrdersInListener()
-            GetOrdersInUseCase.get(trimmed, listener)
-            response = listener.get_response()
-            return JsonResponse(
-                data=response.to_dict(),
-                status=response.status_code
-            )
-
+            if soap_ids:
+                trimmed = split_soap_id_string(soap_ids)
+                if not trimmed:
+                    raise Http404()
+                listener = GetOrdersInListener()
+                GetOrdersInUseCase.get(trimmed, listener)
+                response = listener.get_response()
+                return JsonResponse(
+                    data=response.to_dict(),
+                    status=response.status_code
+                )
+            else:
+                listener = GetOrdersInListener()
+                GetOrdersInUseCase.get(listener=listener)
+                response = listener.get_response()
+                return JsonResponse(
+                    data=response.to_dict(),
+                    status=response.status_code
+                )
 
