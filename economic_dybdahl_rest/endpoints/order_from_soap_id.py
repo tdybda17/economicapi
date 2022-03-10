@@ -8,7 +8,7 @@ from economic_dybdahl_rest.usecases.get_order.soap_ids_string_splitter import sp
 
 
 class OrderFromSoapIDEndpoint(APIView):
-    permission_classes = ()
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request, soap_id=None):
         if soap_id:
