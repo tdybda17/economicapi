@@ -4,6 +4,8 @@ from http import HTTPStatus
 from economic_dybdahl_rest.api.get_draft_order import GetDraftOrderAPI
 from economic_dybdahl_rest.api.get_draft_orders import GetDraftOrdersAPI
 from economic_dybdahl_rest.api.get_products import GetProducts
+from economic_dybdahl_rest.api.get_sent_order import GetSentOrderAPI
+from economic_dybdahl_rest.api.get_sent_orders import GetSentOrdersAPI
 from economic_dybdahl_rest.dto.draft_order_line import DraftOrderLine
 from economic_dybdahl_rest.http.response import Response
 from economic_dybdahl_rest.usecases._listener import Listener
@@ -41,10 +43,11 @@ class GetDraftOrderLinesUseCase:
     @staticmethod
     def get(listener=None):
         try:
-            draft_orders_numbers = get_all_order_drafts_order_numbers()
+            draft_orders_numbers, sent_order_numbers = get_all_sent_and_drafts_order_numbers()
 
             request_draft_orders_lines, model_draft_orders_lines = get_all_draft_orders_request_and_model_lines(
-                draft_orders_numbers=draft_orders_numbers
+                draft_orders_numbers=draft_orders_numbers,
+                sent_order_numbers=sent_order_numbers
             )
 
             product_numbers = get_all_product_numbers_from_lines(lines=request_draft_orders_lines)
@@ -68,21 +71,26 @@ class GetDraftOrderLinesUseCase:
         return draft_order_lines
 
 
-def get_all_order_drafts_order_numbers():
-    draft_orders_numbers = []
-    get_draft_orders_api = GetDraftOrdersAPI()
+def get_all_sent_and_drafts_order_numbers():
+    draft_order_numbers = get_order_numbers(GetDraftOrdersAPI())
+    sent_order_numbers = get_order_numbers(GetSentOrdersAPI())
+    return draft_order_numbers, sent_order_numbers
+
+
+def get_order_numbers(api):
+    order_numbers = []
     next_page = None
     while True:
-        draft_orders_response = get_draft_orders_api.get(next_page)
-        check_status_is_succeeded(draft_orders_response)
+        order_response = api.get(next_page)
+        check_status_is_succeeded(order_response)
 
-        draft_orders_json = draft_orders_response.json()
-        pagination = draft_orders_json['pagination']
-        draft_orders = draft_orders_json['collection']
+        orders_json = order_response.json()
+        pagination = orders_json['pagination']
+        orders = orders_json['collection']
 
-        find_and_add_order_numbers(draft_orders, draft_orders_numbers)
+        find_and_add_order_numbers(orders, order_numbers)
 
-        if len(draft_orders_numbers) > pagination['results']:
+        if len(order_numbers) > pagination['results']:
             break
 
         try:
@@ -90,7 +98,7 @@ def get_all_order_drafts_order_numbers():
         except KeyError:
             break
 
-    return draft_orders_numbers
+    return order_numbers
 
 
 def find_and_add_order_numbers(draft_orders, order_numbers_list):
@@ -99,24 +107,35 @@ def find_and_add_order_numbers(draft_orders, order_numbers_list):
         order_numbers_list.append(order_number)
 
 
-def get_all_draft_orders_request_and_model_lines(draft_orders_numbers):
-    get_draft_order_api = GetDraftOrderAPI()
-    model_draft_order_lines = []
-    request_draft_order_lines = []
+def get_all_draft_orders_request_and_model_lines(draft_orders_numbers, sent_order_numbers):
+    request_draft_order_lines, model_draft_order_lines = get_order_and_model_order_lines(
+        api=GetDraftOrderAPI(),
+        order_numbers=draft_orders_numbers
+    )
+    request_sent_order_lines, model_sent_order_lines = get_order_and_model_order_lines(
+        api=GetSentOrderAPI(),
+        order_numbers=sent_order_numbers
+    )
+    return request_draft_order_lines + request_sent_order_lines, model_draft_order_lines + model_sent_order_lines
 
-    for draft_order_number in draft_orders_numbers:
-        response = get_draft_order_api.get(draft_order_number)
+
+def get_order_and_model_order_lines(api, order_numbers):
+    model_order_lines = []
+    request_order_lines = []
+
+    for draft_order_number in order_numbers:
+        response = api.get(draft_order_number)
         check_status_is_succeeded(response)
         draft_order_json = response.json()
         for line in [a for a in draft_order_json['lines'] if 'product' in a]:
-            request_draft_order_lines.append(line)
-            model_draft_order_lines.append(DraftOrderLine(
+            request_order_lines.append(line)
+            model_order_lines.append(DraftOrderLine(
                 order_number=draft_order_number,
                 economic_number=line['product']['productNumber'],
                 amount=line['quantity'],
                 available=None
             ))
-    return request_draft_order_lines, model_draft_order_lines
+    return request_order_lines, model_order_lines
 
 
 def get_all_product_numbers_from_lines(lines):
