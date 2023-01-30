@@ -1,5 +1,4 @@
 import json
-
 import requests
 
 from economic_dybdahl_rest.api.get_contacts import GetContactsApi
