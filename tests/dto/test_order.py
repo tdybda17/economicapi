@@ -13,6 +13,8 @@ class TestOrder(TestCase):
 
     def test_to_dict(self):
         order = default_order
+
+
         expected = {
             "date": "2018-03-01",
             "currency": "DKK",
@@ -32,7 +34,22 @@ class TestOrder(TestCase):
                 "paymentTermsType": "net"
             },
             "customer": {
-                "customerNumber": 1
+                "name": "28282828",
+                "address": "Selma Lagerløftsvej",
+                "city": "Aalborg Øst",
+                "zipcode": "9220",
+                "country": "Danmark",
+                "currency": "DKK",
+                "corporate_identification_number": "12345678",
+                "customer_contact": "1",
+                "ean": "28282828",
+                "email": "Selma@Selma.dk",
+                "p_number": "28282828",
+                "vat_number": "28282828",
+                "vat_zone_number": "28282828",
+                "customer_number": "123",
+                "attention": "1",
+                "customerNumber": "123"
             },
             "recipient": {
                 "name": "Toj & Co Grossisten",
@@ -100,9 +117,21 @@ class TestOrder(TestCase):
                 name='Lobende maned 14 dage',
                 payment_terms_type='net'
             ),
-            customer=Customer(
-                customer_number=1
-            ),
+            customer=Customer(address="Selma Lagerløftsvej",
+                zipcode="9220",
+                city="Aalborg Øst",
+                country="Danmark",
+                currency="DKK",
+                corporate_identification_number="12345678",
+                customer_number="123",
+                ean="28282828",
+                email="Selma@Selma.dk",
+                p_number="28282828",
+                vat_number="28282828",
+                vat_zone_number="28282828",
+                attention="1",
+                customer_contact="1",
+                name="28282828"),
             recipient=Recipient(
                 name='Toj & Co Grossisten',
                 address='Vejlevej 21',
@@ -158,9 +187,22 @@ default_order = Order(
         name='Lobende maned 14 dage',
         payment_terms_type='net'
     ),
-    customer=Customer(
-        customer_number=1
-    ),
+    customer=Customer(address="Selma Lagerløftsvej",
+        zipcode="9220",
+        city="Aalborg Øst",
+        country="Danmark",
+        currency="DKK",
+        corporate_identification_number="12345678",
+        customer_number="123",
+        ean="28282828",
+        email="Selma@Selma.dk",
+        p_number="28282828",
+        vat_number="28282828",
+        vat_zone_number="28282828",
+        attention="1",
+        customer_contact="1",
+        name="28282828")
+    ,
     recipient=Recipient(
         name='Toj & Co Grossisten',
         address='Vejlevej 21',
