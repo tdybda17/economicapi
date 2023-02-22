@@ -1,7 +1,7 @@
 import json
-
 import requests
 
+from economic_dybdahl_rest.api.get_contacts import GetContactsApi
 from economic_dybdahl_rest.api.get_customer import GetCustomerApi
 from economic_dybdahl_rest.dto.customer import Customer
 from economic_dybdahl_rest.dto.delivery_location import DeliveryLocation
@@ -16,6 +16,10 @@ class GetCustomerUseCase:
         if response.status_code == 200:
             _json = json.loads(response.content.decode('utf-8'))
             customer = Customer.from_response(_json)
+
+            contacts = GetContactsApi().get(customer_number).json()['collection']
+            customer.contacts = contacts
+
             delivery_locations_url = _json['deliveryLocations']
             response = requests.get(
                 url=delivery_locations_url,

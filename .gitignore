@@ -260,3 +260,8 @@ fabric.properties
 # Pyre type checker
 
 # End of https://www.gitignore.io/api/python,django,pycharm
+.idea/vcs.xml
+.idea/misc.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/economicapi.iml
