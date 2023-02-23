@@ -12,7 +12,14 @@ class JournalEndpoint(APIView):
 
     def post(self, request, journal_id):
         response = PostVouchers().post(journal_id, request.data)
+
+
+        if response.status_code == 201:
+            data = 'Created'
+        else:
+            data = 'Error'
+
         return JsonResponse(
-            data=response,
+            data={'data': data},
             status=response.status_code
         )
