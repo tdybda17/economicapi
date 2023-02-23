@@ -54,10 +54,10 @@ class Customer(Model):
             'customerNumber': self.customer_number
         }
 
-        if self.contacts:
+        if "contacts" in self.__dict__:
             _dict['contacts'] = self.contacts
 
-        if self.delivery_locations:
+        if "delivery_locations" in self.__dict__:
             _dict['delivery_locations'] = [d.to_dict() for d in self.delivery_locations]
 
         return _dict
