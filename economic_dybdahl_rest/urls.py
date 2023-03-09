@@ -1,6 +1,7 @@
 from django.urls import path
 
 from economic_dybdahl_rest.endpoints.all_customers import AllCustomersEndpoint
+from economic_dybdahl_rest.endpoints.attachment import AttachmentEndpoint
 from economic_dybdahl_rest.endpoints.block_product import BlockProductEndpoint
 from economic_dybdahl_rest.endpoints.customers import CustomersEndpoint
 from economic_dybdahl_rest.endpoints.draft_orders_lines import DraftOrdersLinesEndpoint
@@ -18,6 +19,7 @@ urlpatterns = [
     path('v1/customers/', AllCustomersEndpoint.as_view(), name='get all customer numbers endpoint'),
     path('v1/customers/<str:customer_number>/', CustomersEndpoint.as_view(), name='get customer endpoint'),
     path('v1/journals/<int:journal_id>/', JournalEndpoint.as_view(), name='post journals endpoint'),
+    path('v1/journals/<int:journal_id>/attachment/<int:accounting_year>/<int:attachment_id>/', AttachmentEndpoint.as_view(), name='post journals endpoint'),
     path('v1/invoices_draft/', InvoicesDraftEndpoint.as_view(), name='post a invoice'),
     path('v1/supplier/invoice/', SupplierInvoiceWithLinesEndpoint.as_view(), name='supplier invoice with lines'),
     path('v1/supplier/invoice/<int:id>/', SupplierInvoiceWithLinesEndpoint.as_view(),
