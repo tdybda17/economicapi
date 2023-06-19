@@ -14,6 +14,6 @@ class InvoicesDraftEndpoint(APIView):
         PostInvoicesDraftsUseCase.post(invoice, listener)
         response = listener.get_response()
         return JsonResponse(
-            data={},
+            data=response.to_dict(),
             status=response.status_code
         )
