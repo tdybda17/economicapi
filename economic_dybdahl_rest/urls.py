@@ -2,6 +2,7 @@ from django.urls import path
 
 from economic_dybdahl_rest.endpoints.all_customers import AllCustomersEndpoint
 from economic_dybdahl_rest.endpoints.block_product import BlockProductEndpoint
+from economic_dybdahl_rest.endpoints.booked_invoice import BookedInvoiceEndpoint
 from economic_dybdahl_rest.endpoints.customers import CustomersEndpoint
 from economic_dybdahl_rest.endpoints.draft_orders_lines import DraftOrdersLinesEndpoint
 from economic_dybdahl_rest.endpoints.invoices_drafts import InvoicesDraftEndpoint, BookDraftInvoiceEndpoint
@@ -35,6 +36,11 @@ urlpatterns += [
     path('v1/invoices_draft/', InvoicesDraftEndpoint.as_view(), name='post a invoice'),
     path('v1/invoices_draft/<int:draft_invoice_number>/book/', BookDraftInvoiceEndpoint.as_view(),
          name='book a draft invoice'),
+]
+
+# Booked invoices
+urlpatterns += [
+    path('v1/invoices_booked/<int:booked_id>/', BookedInvoiceEndpoint.as_view(), name='get booked invoice'),
 ]
 
 # Orders
