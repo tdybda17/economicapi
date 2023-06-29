@@ -17,6 +17,7 @@ class Customer(Model):
                  vat_number,
                  vat_zone_number,
                  customer_number,
+                 payment_term_number,
                  name=None) -> None:
         self.customer_number = customer_number
         self.name = name
@@ -33,6 +34,7 @@ class Customer(Model):
         self.p_number = p_number
         self.vat_number = vat_number
         self.vat_zone_number = vat_zone_number
+        self.payment_term_number = payment_term_number
 
     def to_dict(self):
         _dict = {
@@ -51,7 +53,8 @@ class Customer(Model):
             'vat_zone_number': self.vat_zone_number,
             'customer_number': self.customer_number,
             'attention': self.attention,
-            'customerNumber': self.customer_number
+            'customerNumber': self.customer_number,
+            'paymentTermsNumber': self.payment_term_number
         }
 
         if "contacts" in self.__dict__:
@@ -87,4 +90,5 @@ class Customer(Model):
             vat_number=response.get('vatNumber', ''),
             vat_zone_number=response.get(response['vatZone']['vatZoneNumber'], None),
             customer_number=response.get('customerNumber', ''),
+            payment_term_number=response.get('paymentTerms').get('paymentTermsNumber')
         )
