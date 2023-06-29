@@ -14,7 +14,6 @@ class TestOrder(TestCase):
     def test_to_dict(self):
         order = default_order
 
-
         expected = {
             "date": "2018-03-01",
             "currency": "DKK",
@@ -49,7 +48,8 @@ class TestOrder(TestCase):
                 "vat_zone_number": "28282828",
                 "customer_number": "123",
                 "attention": "1",
-                "customerNumber": "123"
+                "customerNumber": "123",
+                "paymentTermsNumber": 1
             },
             "recipient": {
                 "name": "Toj & Co Grossisten",
@@ -118,20 +118,21 @@ class TestOrder(TestCase):
                 payment_terms_type='net'
             ),
             customer=Customer(address="Selma Lagerløftsvej",
-                zipcode="9220",
-                city="Aalborg Øst",
-                country="Danmark",
-                currency="DKK",
-                corporate_identification_number="12345678",
-                customer_number="123",
-                ean="28282828",
-                email="Selma@Selma.dk",
-                p_number="28282828",
-                vat_number="28282828",
-                vat_zone_number="28282828",
-                attention="1",
-                customer_contact="1",
-                name="28282828"),
+                              zipcode="9220",
+                              city="Aalborg Øst",
+                              country="Danmark",
+                              currency="DKK",
+                              corporate_identification_number="12345678",
+                              customer_number="123",
+                              ean="28282828",
+                              email="Selma@Selma.dk",
+                              p_number="28282828",
+                              vat_number="28282828",
+                              vat_zone_number="28282828",
+                              attention="1",
+                              customer_contact="1",
+                              name="28282828",
+                              payment_term_number=1),
             recipient=Recipient(
                 name='Toj & Co Grossisten',
                 address='Vejlevej 21',
@@ -188,20 +189,21 @@ default_order = Order(
         payment_terms_type='net'
     ),
     customer=Customer(address="Selma Lagerløftsvej",
-        zipcode="9220",
-        city="Aalborg Øst",
-        country="Danmark",
-        currency="DKK",
-        corporate_identification_number="12345678",
-        customer_number="123",
-        ean="28282828",
-        email="Selma@Selma.dk",
-        p_number="28282828",
-        vat_number="28282828",
-        vat_zone_number="28282828",
-        attention="1",
-        customer_contact="1",
-        name="28282828")
+                      zipcode="9220",
+                      city="Aalborg Øst",
+                      country="Danmark",
+                      currency="DKK",
+                      corporate_identification_number="12345678",
+                      customer_number="123",
+                      ean="28282828",
+                      email="Selma@Selma.dk",
+                      p_number="28282828",
+                      vat_number="28282828",
+                      vat_zone_number="28282828",
+                      attention="1",
+                      customer_contact="1",
+                      name="28282828",
+                      payment_term_number=1)
     ,
     recipient=Recipient(
         name='Toj & Co Grossisten',
