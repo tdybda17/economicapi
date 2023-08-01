@@ -10,6 +10,7 @@ class GetAllCustomersApi(EconomicApi):
     def __init__(self) -> None:
         super().__init__(self.path)
 
+
     def get(self):
         response = requests.get(
             url=self.ECONOMIC_URL + '/',
