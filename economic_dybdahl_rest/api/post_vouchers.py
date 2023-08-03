@@ -4,7 +4,7 @@ from economic_dybdahl_rest.api._api import EconomicApi
 from economic_dybdahl_rest.dto.product import Product
 
 
-class PostVouchers(EconomicApi):
+class Vouchers(EconomicApi):
 
     path = 'journals/'
 
@@ -18,3 +18,11 @@ class PostVouchers(EconomicApi):
             headers=self.headers
         )
         return response
+
+    def get(self, journal_id):
+        response = requests.get(
+            url=self.ECONOMIC_URL + f'{journal_id}/vouchers',
+            headers=self.headers
+        )
+        return response
+
