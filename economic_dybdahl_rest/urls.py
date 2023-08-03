@@ -1,6 +1,7 @@
 from django.urls import path
 
 from economic_dybdahl_rest.endpoints.all_customers import AllCustomersEndpoint
+from economic_dybdahl_rest.endpoints.attachment import AttachmentEndpoint
 from economic_dybdahl_rest.endpoints.block_product import BlockProductEndpoint
 from economic_dybdahl_rest.endpoints.booked_invoice import BookedInvoiceEndpoint
 from economic_dybdahl_rest.endpoints.customers import CustomersEndpoint
@@ -22,13 +23,14 @@ urlpatterns = [
 
 # Customers
 urlpatterns += [
-    path('v1/all_customers/', AllCustomersEndpoint.as_view(), name='get customer endpoint'),
+    path('v1/customers/', AllCustomersEndpoint.as_view(), name='get all customer numbers endpoint'),
     path('v1/customers/<str:customer_number>/', CustomersEndpoint.as_view(), name='get all customer numbers endpoint'),
 ]
 
 # Journals
 urlpatterns += [
     path('v1/journals/<int:journal_id>/', JournalEndpoint.as_view(), name='post journals endpoint'),
+path('v1/journals/<int:journal_id>/attachment/<int:accounting_year>/<int:attachment_id>/', AttachmentEndpoint.as_view(), name='post journals endpoint'),
 ]
 
 # Draft invoices
