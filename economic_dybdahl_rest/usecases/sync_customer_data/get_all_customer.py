@@ -36,7 +36,7 @@ class GetAllCustomerUseCase:
                     break
 
             listener.on_success(data={
-                'customer_numbers': customer_numbers
+                'customer_numbers': customer_numbers.__str__()
             })
         except DoesNotExistException:
             listener.on_does_not_exist()
