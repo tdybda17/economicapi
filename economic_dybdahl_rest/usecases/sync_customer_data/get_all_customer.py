@@ -13,21 +13,56 @@ class GetAllCustomerUseCase:
     @staticmethod
     def get(listener):
         api = GetAllCustomersApi()
-        response = api.get()
+        customer_numbers = []
 
-        if response.status_code == 200:
-            _json = json.loads(response.content.decode('utf-8'))
+        next_page = None
 
-            data = _json['collection']
+        try:
+            while True:
+                response = api.get(next_page)
 
-            customer_numbers = []
-            for number in data:
-                customer_numbers.append(number['customerNumber'])
+                validate_response_status(response)
+                _json = json.loads(response.content.decode('utf-8'))
+
+                pagination = _json['pagination']
+                customers = _json['collection']
+
+                for customer in customers:
+                    customer_numbers.append(str(customer['customerNumber']))
+
+                try:
+                    next_page = pagination['nextPage']
+                except KeyError:
+                    break
 
             listener.on_success(data={
-                'customer_numbers': customer_numbers.__str__()
+                'customer_numbers': customer_numbers
             })
-        elif response.status_code == 404:
+        except DoesNotExistException:
             listener.on_does_not_exist()
-        else:
-            listener.on_unknown_error(response.status_code, response.content)
+            return
+        except UnknownErrorException as e:
+            listener.on_unknown_error(e.status_code, e.content)
+            return
+
+
+def validate_response_status(response):
+    if response.status_code == 200:
+        return
+    if response.status_code == 404:
+        raise DoesNotExistException()
+
+    raise UnknownErrorException(response.status_code, response.content)
+
+
+class DoesNotExistException(RuntimeError):
+    pass
+
+
+class UnknownErrorException(RuntimeError):
+
+    def __init__(self, status_code, content, *args: object) -> None:
+        self.status_code = status_code
+        self.content = content
+        super().__init__(*args)
+
