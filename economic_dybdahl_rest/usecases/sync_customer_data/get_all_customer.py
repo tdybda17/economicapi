@@ -28,7 +28,7 @@ class GetAllCustomerUseCase:
                 customers = _json['collection']
 
                 for customer in customers:
-                    customer_numbers.append(str(customer['customerNumber']))
+                    customer_numbers.append(customer['customerNumber'])
 
                 try:
                     next_page = pagination['nextPage']
