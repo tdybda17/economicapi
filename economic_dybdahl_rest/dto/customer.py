@@ -18,6 +18,7 @@ class Customer(Model):
                  vat_zone_number,
                  customer_number,
                  payment_term_number,
+                 vat_zone_name=None,
                  name=None) -> None:
         self.customer_number = customer_number
         self.name = name
@@ -33,7 +34,8 @@ class Customer(Model):
         self.email = email
         self.p_number = p_number
         self.vat_number = vat_number
-        self.vat_zone_number = vat_zone_number
+        self.vat_zone_number = vat_zone_number,
+        self.vat_zone_name = vat_zone_name
         self.payment_term_number = payment_term_number
 
     def to_dict(self):
@@ -51,6 +53,7 @@ class Customer(Model):
             'p_number': self.p_number,
             'vat_number': self.vat_number,
             'vat_zone_number': self.vat_zone_number,
+            'vat_zone_name': self.vat_zone_name,
             'customer_number': self.customer_number,
             'attention': self.attention,
             'customerNumber': self.customer_number,

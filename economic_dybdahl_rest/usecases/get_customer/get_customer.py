@@ -16,6 +16,7 @@ class GetCustomerUseCase:
         if response.status_code == 200:
             _json = json.loads(response.content.decode('utf-8'))
             customer = Customer.from_response(_json)
+            set_customer_vat_zone_name(customer, _json, api)
 
             contacts = GetContactsApi().get(customer_number).json()['collection']
             customer.contacts = contacts
@@ -37,3 +38,13 @@ class GetCustomerUseCase:
             listener.on_does_not_exist()
         else:
             listener.on_unknown_error(response.status_code, response.content)
+
+def set_customer_vat_zone_name(customer, _json, api):
+    if _json.get('vatZone', None) and _json['vatZone'].get('self', None):
+        response = requests.get(
+            url=_json['vatZone']['self'],
+            headers=api.headers
+        )
+        vat_zone_response_json = json.loads(response.content.decode('utf-8'))
+
+        customer.vat_zone_name = vat_zone_response_json.get('name', None)
