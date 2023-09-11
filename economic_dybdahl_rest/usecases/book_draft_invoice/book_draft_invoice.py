@@ -1,5 +1,4 @@
 import json
-from dataclasses import dataclass
 
 from economic_dybdahl_rest.api.book_draft_invoice import BookDraftInvoiceAPI, BookDraftInvoiceRequest
 from economic_dybdahl_rest.http.response import Response
