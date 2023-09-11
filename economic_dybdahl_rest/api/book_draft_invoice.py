@@ -1,12 +1,11 @@
 import json
-from dataclasses import dataclass
 
 import requests
 
 from economic_dybdahl_rest.api._api import EconomicApi
 
 
-@dataclass
+
 class BookDraftInvoiceRequest:
     draft_invoice_number: int
     book_with_number: int = None
