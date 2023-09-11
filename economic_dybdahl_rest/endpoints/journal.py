@@ -19,7 +19,10 @@ class JournalEndpoint(APIView):
         if response.status_code == 201:
             data = 'Created'
         else:
-            data = 'Error'
+            json_response = response.json()
+            if json_response:
+                data = json_response
+            else: data = response.content
 
         return JsonResponse(
             data={'data': data},

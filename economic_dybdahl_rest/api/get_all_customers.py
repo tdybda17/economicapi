@@ -11,9 +11,9 @@ class GetAllCustomersApi(EconomicApi):
         super().__init__(self.path)
 
 
-    def get(self):
+    def get(self, url=None):
         response = requests.get(
-            url=self.ECONOMIC_URL + '/',
+            url=self.ECONOMIC_URL + '/' if not url else url,
             headers=self.headers
         )
         return response

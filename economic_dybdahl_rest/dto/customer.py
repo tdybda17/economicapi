@@ -74,6 +74,12 @@ class Customer(Model):
 
     @staticmethod
     def from_response(response):
+        vat_zone = response.get('vatZone', None)
+
+        vat_zone_number = None
+        if vat_zone:
+            vat_zone_number = vat_zone.get('vatZoneNumber', None)
+
         return Customer(
             attention=response.get('attention', ''),
             name=response.get('name', ''),
@@ -88,7 +94,7 @@ class Customer(Model):
             email=response.get('email', ''),
             p_number=response.get('pNumber', ''),
             vat_number=response.get('vatNumber', ''),
-            vat_zone_number=response.get(response['vatZone']['vatZoneNumber'], None),
+            vat_zone_number=vat_zone_number,
             customer_number=response.get('customerNumber', ''),
             payment_term_number=response.get('paymentTerms').get('paymentTermsNumber')
         )

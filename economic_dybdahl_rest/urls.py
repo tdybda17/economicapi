@@ -8,6 +8,7 @@ from economic_dybdahl_rest.endpoints.customers import CustomersEndpoint
 from economic_dybdahl_rest.endpoints.draft_orders_lines import DraftOrdersLinesEndpoint
 from economic_dybdahl_rest.endpoints.invoices_drafts import InvoicesDraftEndpoint, BookDraftInvoiceEndpoint
 from economic_dybdahl_rest.endpoints.journal import JournalEndpoint
+from economic_dybdahl_rest.endpoints.journals import JournalsEndpoint
 from economic_dybdahl_rest.endpoints.order_from_soap_id import OrderFromSoapIDEndpoint
 from economic_dybdahl_rest.endpoints.payment_terms import PaymentTermsEndpoint
 from economic_dybdahl_rest.endpoints.product import ProductEndpoint
@@ -30,7 +31,8 @@ urlpatterns += [
 # Journals
 urlpatterns += [
     path('v1/journals/<int:journal_id>/', JournalEndpoint.as_view(), name='post journals endpoint'),
-path('v1/journals/<int:journal_id>/attachment/<int:accounting_year>/<int:attachment_id>/', AttachmentEndpoint.as_view(), name='post journals endpoint'),
+    path('v1/journals/<int:journal_id>/attachment/<int:accounting_year>/<int:attachment_id>/', AttachmentEndpoint.as_view(), name='post journals endpoint'),
+    path('v1/journals/', JournalsEndpoint.as_view(), name='Journals')
 ]
 
 # Draft invoices
