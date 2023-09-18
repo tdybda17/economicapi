@@ -17,8 +17,7 @@ class GetCustomerUseCase:
             _json = json.loads(response.content.decode('utf-8'))
             customer = Customer.from_response(_json)
 
-            contacts = GetContactsApi().get(customer_number).json()['collection']
-            customer.contacts = contacts
+            customer.contacts = GetCustomerUseCase._crawl_contact_pages(customer_number, [], skip_pages=0)
 
             delivery_locations_url = _json['deliveryLocations']
             response = requests.get(
@@ -37,3 +36,19 @@ class GetCustomerUseCase:
             listener.on_does_not_exist()
         else:
             listener.on_unknown_error(response.status_code, response.content)
+
+    @staticmethod
+    def _crawl_contact_pages(customer_number, contacts, skip_pages=0):
+        contact_response = GetContactsApi().get(
+            customer_number=customer_number,
+            skip_pages=skip_pages
+        ).json()
+
+        contacts.extend(contact_response['collection'])
+        if 'nextPage' in contact_response['pagination']:
+            return GetCustomerUseCase._crawl_contact_pages(
+                customer_number=customer_number,
+                contacts=contacts,
+                skip_pages=skip_pages + 1,
+            )
+        return contacts

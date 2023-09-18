@@ -129,5 +129,5 @@ try:
 except:
     config = dict()
 
-X_APP_SECRET_TOKEN = config.get('X_APP_SECRET_TOKEN', 'demo')
-X_AGREEMENT_GRANT_TOKEN = config.get('X_AGREEMENT_GRANT_TOKEN', 'demo')
+X_APP_SECRET_TOKEN = config.get('X_APP_SECRET_TOKEN', 'SNknfE3pR93oz6korYYiWqWN4nWDkC2hXkOnbIHx6hs1')
+X_AGREEMENT_GRANT_TOKEN = config.get('X_AGREEMENT_GRANT_TOKEN', 'He5VkU3NfHGwOOnxQ0vQJKpfQDsM9GxP7BrCJ8h1kyg1')
