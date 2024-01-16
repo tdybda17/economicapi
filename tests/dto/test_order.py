@@ -49,7 +49,8 @@ class TestOrder(TestCase):
                 "customer_number": "123",
                 "attention": "1",
                 "customerNumber": "123",
-                "paymentTermsNumber": 1
+                "paymentTermsNumber": 1,
+                "eInvoiceDisabled": False
             },
             "recipient": {
                 "name": "Toj & Co Grossisten",
@@ -132,7 +133,8 @@ class TestOrder(TestCase):
                               attention="1",
                               customer_contact="1",
                               name="28282828",
-                              payment_term_number=1),
+                              payment_term_number=1,
+                              e_invoice_disabled=False),
             recipient=Recipient(
                 name='Toj & Co Grossisten',
                 address='Vejlevej 21',
@@ -203,7 +205,8 @@ default_order = Order(
                       attention="1",
                       customer_contact="1",
                       name="28282828",
-                      payment_term_number=1)
+                      payment_term_number=1,
+                      e_invoice_disabled=False)
     ,
     recipient=Recipient(
         name='Toj & Co Grossisten',
