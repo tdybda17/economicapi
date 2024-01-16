@@ -18,7 +18,8 @@ class Customer(Model):
                  vat_zone_number,
                  customer_number,
                  payment_term_number,
-                 name=None) -> None:
+                 name=None,
+                 e_invoice_disabled=False) -> None:
         self.customer_number = customer_number
         self.name = name
         self.attention = attention
@@ -35,6 +36,7 @@ class Customer(Model):
         self.vat_number = vat_number
         self.vat_zone_number = vat_zone_number
         self.payment_term_number = payment_term_number
+        self.e_invoice_disabled = e_invoice_disabled
 
     def to_dict(self):
         _dict = {
@@ -54,7 +56,8 @@ class Customer(Model):
             'customer_number': self.customer_number,
             'attention': self.attention,
             'customerNumber': self.customer_number,
-            'paymentTermsNumber': self.payment_term_number
+            'paymentTermsNumber': self.payment_term_number,
+            'eInvoiceDisabled': self.e_invoice_disabled
         }
 
         if "contacts" in self.__dict__:
@@ -96,5 +99,6 @@ class Customer(Model):
             vat_number=response.get('vatNumber', ''),
             vat_zone_number=vat_zone_number,
             customer_number=response.get('customerNumber', ''),
-            payment_term_number=response.get('paymentTerms').get('paymentTermsNumber')
+            payment_term_number=response.get('paymentTerms').get('paymentTermsNumber'),
+            e_invoice_disabled=response.get('eInvoicingDisabledByDefault', False)
         )
