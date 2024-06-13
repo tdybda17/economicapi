@@ -15,6 +15,7 @@ from economic_dybdahl_rest.endpoints.product import ProductEndpoint
 from economic_dybdahl_rest.endpoints.related_vouchers import RelatedVouchersEndpoint
 from economic_dybdahl_rest.endpoints.supplier_invoice import SupplierInvoiceWithLinesEndpoint, \
     SupplierInvoiceAllEndpoint
+from economic_dybdahl_rest.endpoints.voucher_attachment import VoucherAttachmentEndpoint
 
 # Product
 urlpatterns = [
@@ -34,7 +35,8 @@ urlpatterns += [
     path('v1/journals/<int:journal_id>/', JournalEndpoint.as_view(), name='post journals endpoint'),
     path('v1/journals/<int:journal_id>/attachment/<int:accounting_year>/<int:attachment_id>/', AttachmentEndpoint.as_view(), name='post journals endpoint'),
     path('v1/journals/', JournalsEndpoint.as_view(), name='Journals'),
-    path('v1/journals/<int:journal_number>/accountingyear/<int:accounting_year>/vouchers/<int:voucher_number>/', RelatedVouchersEndpoint.as_view(), name='related journal vouchers')
+    path('v1/journals/<int:journal_number>/accountingyear/<int:accounting_year>/vouchers/<int:voucher_number>/', RelatedVouchersEndpoint.as_view(), name='related journal vouchers'),
+    path('v1/journals/<int:journal_number>/accountingyear/<int:accounting_year>/vouchers/<int:voucher_number>/attachment/file', VoucherAttachmentEndpoint.as_view(), name='voucher attachment'),
 ]
 
 # Draft invoices
