@@ -6,9 +6,6 @@ import base64
 
 from economic_dybdahl_rest.api.get_attachments import Attachment, HasAttachment
 from economic_dybdahl_rest.api.post_vouchers import Vouchers
-from economic_dybdahl_rest.usecases.get_customer.get_customer import GetCustomerUseCase
-from economic_dybdahl_rest.usecases.get_customer.get_customer_listener import GetCustomerListener
-
 
 class JournalEndpoint(APIView):
     permission_classes = (IsAuthenticated,)
