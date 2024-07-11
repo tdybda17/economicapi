@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from http import HTTPStatus
 
 from economic_dybdahl_rest.api.get_journal_voucher import GetJournalVoucherAPI
