@@ -6,9 +6,6 @@ import base64
 
 from economic_dybdahl_rest.api.get_attachments import Attachment, HasAttachment
 from economic_dybdahl_rest.api.post_vouchers import Vouchers
-from economic_dybdahl_rest.usecases.get_customer.get_customer import GetCustomerUseCase
-from economic_dybdahl_rest.usecases.get_customer.get_customer_listener import GetCustomerListener
-
 
 class JournalEndpoint(APIView):
     permission_classes = (IsAuthenticated,)
@@ -43,11 +40,37 @@ class JournalEndpoint(APIView):
             voucher_name = list(voucher['entries'].keys())[0]
 
             temt_voucher = {}
+            vat_data = None
+
+            try:
+                contra_vat_account = voucher['entries'][voucher_name][0]['contraVatAccount']
+                vat_data = dict(
+                rate_percentage=contra_vat_account['ratePercentage'],
+                vat_code=contra_vat_account['vatCode'],
+            )
+            except KeyError:
+                pass
+
+            account_number = None
+            try:
+                account_number = voucher['entries'][voucher_name][0]['supplier']['supplierNumber']
+            except KeyError:
+                pass
+
+            contra_account_number = None
+            try:
+                contra_account_number = voucher['entries'][voucher_name][0]['contraAccount']['accountNumber']
+            except KeyError:
+                pass
 
             temt_voucher['voucher_number'] = voucher['voucherNumber']
             temt_voucher['date'] = voucher['entries'][voucher_name][0]['date']
             temt_voucher['voucher_amount'] = voucher['entries'][voucher_name][0]['amount']
+            temt_voucher['voucher_amount_default_currency'] = voucher['entries'][voucher_name][0]['amountDefaultCurrency']
             temt_voucher['accounting_year'] = voucher['accountingYear']['year']
+            temt_voucher['account_number'] = account_number
+            temt_voucher['contra_account_number'] = contra_account_number
+            temt_voucher['contra_vat_account'] = vat_data
 
             attc_response = HasAttachment().get(journal_id, voucher['accountingYear']['year'], voucher['voucherNumber'])
             if attc_response.status_code == 200:
