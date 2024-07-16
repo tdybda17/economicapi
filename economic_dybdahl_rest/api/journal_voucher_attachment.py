@@ -16,7 +16,7 @@ class JournalVoucherAttachmentAPI(EconomicApi):
     def patch(self, journal_number, accounting_year_voucher_number, data):
         response = requests.patch(
             url=self.ECONOMIC_URL + str(journal_number) + '/vouchers/' + str(accounting_year_voucher_number) + '/attachment/file',
-            headers=self.headers,
+            headers=self.updated_headers,
             files=data
         )
         return response
