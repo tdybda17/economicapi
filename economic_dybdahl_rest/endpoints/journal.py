@@ -71,6 +71,7 @@ class JournalEndpoint(APIView):
             temt_voucher['account_number'] = account_number
             temt_voucher['contra_account_number'] = contra_account_number
             temt_voucher['contra_vat_account'] = vat_data
+            temt_voucher['exchange_rate'] = voucher.get('exchangeRate', None)
 
             attc_response = HasAttachment().get(journal_id, voucher['accountingYear']['year'], voucher['voucherNumber'])
             if attc_response.status_code == 200:
