@@ -9,12 +9,9 @@ from economic_dybdahl_rest.endpoints.draft_orders_lines import DraftOrdersLinesE
 from economic_dybdahl_rest.endpoints.invoices_drafts import InvoicesDraftEndpoint, BookDraftInvoiceEndpoint
 from economic_dybdahl_rest.endpoints.journal import JournalEndpoint
 from economic_dybdahl_rest.endpoints.journals import JournalsEndpoint
-from economic_dybdahl_rest.endpoints.order_from_soap_id import OrderFromSoapIDEndpoint
 from economic_dybdahl_rest.endpoints.payment_terms import PaymentTermsEndpoint
 from economic_dybdahl_rest.endpoints.product import ProductEndpoint
 from economic_dybdahl_rest.endpoints.related_vouchers import RelatedVouchersEndpoint
-from economic_dybdahl_rest.endpoints.supplier_invoice import SupplierInvoiceWithLinesEndpoint, \
-    SupplierInvoiceAllEndpoint
 from economic_dybdahl_rest.endpoints.voucher_attachment import VoucherAttachmentEndpoint
 
 # Product
@@ -54,21 +51,9 @@ urlpatterns += [
 # Orders
 urlpatterns += [
     path('v1/orders/drafts/lines/', DraftOrdersLinesEndpoint.as_view(), name='get all draft orders lines'),
-    path('v1/orders/<int:soap_id>/', OrderFromSoapIDEndpoint.as_view(),
-         name='get order from a soap id or soap id list'),
-    path('v1/orders/', OrderFromSoapIDEndpoint.as_view(), name='get order from a soap id or soap id list'),
 ]
 
 # Payment terms
 urlpatterns += [
     path('v1/payment-terms/', PaymentTermsEndpoint.as_view(), name='Payment terms'),
-]
-
-# Supplier invoice
-urlpatterns += [
-    path('v1/supplier/invoice/', SupplierInvoiceWithLinesEndpoint.as_view(), name='supplier invoice with lines'),
-    path('v1/supplier/invoice/<int:id>/', SupplierInvoiceWithLinesEndpoint.as_view(),
-         name='supplier invoice with lines'),
-    path('v1/supplier/invoice/all/', SupplierInvoiceAllEndpoint.as_view(),
-         name='supplier invoice with lines'),
 ]
