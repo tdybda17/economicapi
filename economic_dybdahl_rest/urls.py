@@ -6,7 +6,8 @@ from economic_dybdahl_rest.endpoints.block_product import BlockProductEndpoint
 from economic_dybdahl_rest.endpoints.booked_invoice import BookedInvoiceEndpoint
 from economic_dybdahl_rest.endpoints.customers import CustomersEndpoint
 from economic_dybdahl_rest.endpoints.draft_orders_lines import DraftOrdersLinesEndpoint
-from economic_dybdahl_rest.endpoints.invoices_drafts import InvoicesDraftEndpoint, BookDraftInvoiceEndpoint
+from economic_dybdahl_rest.endpoints.invoices_drafts import InvoicesDraftEndpoint, BookDraftInvoiceEndpoint, \
+    GetDraftInvoiceEndpoint
 from economic_dybdahl_rest.endpoints.journal import JournalEndpoint
 from economic_dybdahl_rest.endpoints.journals import JournalsEndpoint
 from economic_dybdahl_rest.endpoints.payment_terms import PaymentTermsEndpoint
@@ -41,6 +42,8 @@ urlpatterns += [
     path('v1/invoices_draft/', InvoicesDraftEndpoint.as_view(), name='post a invoice'),
     path('v1/invoices_draft/<int:draft_invoice_number>/book/', BookDraftInvoiceEndpoint.as_view(),
          name='book a draft invoice'),
+    path('v1/invoices_draft/<str:draft_invoice_number>/', GetDraftInvoiceEndpoint.as_view(),
+         name='get draft invoice'),
 ]
 
 # Booked invoices

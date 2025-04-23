@@ -9,6 +9,30 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import json
 import os
 
+def as_str_or_none(value):
+    if str(value) == 'None' or str(value) == 'null':
+        return None
+    return value
+
+def as_bool(value):
+    if isinstance(value, bool):
+        return value
+
+    return str(value) in [True, 'True', 'true', '1', 1, 'yes']
+
+
+def as_int(value):
+    if value is None or value == 'None':
+        return None
+    return int(value)
+
+
+def as_list(value):
+    if value is None or str(value) == ' ' or str(value) == '':
+        return []
+
+    return str(value).split(' ')
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -17,13 +41,32 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '__SOMETHING__'
+SECRET_KEY = os.getenv('SECRET_KEY', '__SECRET_KEY__')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = as_bool(os.getenv('DEBUG', True))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = as_list(os.getenv('ALLOWED_HOSTS', '127.0.0.1 localhost'))
+CSRF_TRUSTED_ORIGINS = as_list(os.getenv('CSRF_TRUSTED_ORIGINS', ''))
+CSRF_COOKIE_NAME = os.getenv('CSRF_COOKIE_NAME', 'local.csrftoken')
+SESSION_COOKIE_NAME = os.getenv('SESSION_COOKIE_NAME', 'local.sessionid')
 
+CORS_ALLOWED_ORIGINS = as_list(os.getenv('CORS_ALLOWED_ORIGINS', ''))
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTION',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+SESSION_COOKIE_SECURE = as_bool(os.getenv('SESSION_COOKIE_SECURE', False))
+SECURE_CONTENT_TYPE_NOSNIFF = as_bool(os.getenv('SECURE_CONTENT_TYPE_NOSNIFF', False))
+SECURE_BROWSER_XSS_FILTER = as_bool(os.getenv('SECURE_BROWSER_XSS_FILTER', False))
+SECURE_SSL_REDIRECT = as_bool(os.getenv('SECURE_SSL_REDIRECT', False))
+CSRF_COOKIE_SECURE = as_bool(os.getenv('CSRF_COOKIE_SECURE', False))
+X_FRAME_OPTIONS = 'DENY'
 
 # Application definition
 
@@ -35,7 +78,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-
     'economic_dybdahl_rest.apps.EconomicDybdahlRestConfig',
 ]
 
@@ -120,14 +162,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = os.getenv('STATIC_URL', '/static/')
+STATIC_ROOT = os.path.join(BASE_DIR, os.getenv('STATIC_ROOT', 'static')) if os.getenv('STATIC_ROOT', None) else None
+STATICFILES_DIRS = as_list(os.getenv('STATICFILES_DIRS', ''))
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-try:
-    with open(os.path.join(BASE_DIR, 'credentials.json')) as json_file:
-        config = json.load(json_file)
-except:
-    config = dict()
+# media folder
+MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, os.getenv('MEDIA_ROOT', 'media'))
 
-X_APP_SECRET_TOKEN = config.get('X_APP_SECRET_TOKEN', 'demo')
-X_AGREEMENT_GRANT_TOKEN = config.get('X_AGREEMENT_GRANT_TOKEN', 'demo')
+X_APP_SECRET_TOKEN = os.getenv('X_APP_SECRET_TOKEN', 'demo')
+X_AGREEMENT_GRANT_TOKEN = os.getenv('X_AGREEMENT_GRANT_TOKEN', 'demo')

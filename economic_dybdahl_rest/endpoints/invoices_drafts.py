@@ -5,6 +5,8 @@ from rest_framework.views import APIView
 from economic_dybdahl_rest.api.book_draft_invoice import BookDraftInvoiceRequest
 from economic_dybdahl_rest.usecases.book_draft_invoice.book_draft_invoice import BookDraftInvoiceListener, \
     BookDraftInvoiceUseCase
+from economic_dybdahl_rest.usecases.get_draft_invoice.get_draft_invoice import GetDraftInvoiceListener, \
+    GetDraftInvoiceUseCase, GetDraftInvoiceRequest
 from economic_dybdahl_rest.usecases.invoices_drafts.invoices_drafts import PostInvoicesDraftsUseCase
 from economic_dybdahl_rest.usecases.invoices_drafts.invoices_drafts_listerner import InvoicesDraftsListener
 
@@ -35,8 +37,21 @@ class BookDraftInvoiceEndpoint(APIView):
             status=response.status_code
         )
 
-
     def get_request_object(self, request, draft_invoice_number):
         return BookDraftInvoiceRequest(
             draft_invoice_number=draft_invoice_number
+        )
+
+
+class GetDraftInvoiceEndpoint(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, draft_invoice_number):
+        presenter = GetDraftInvoiceListener()
+        request_object = GetDraftInvoiceRequest(draft_invoice_number)
+        GetDraftInvoiceUseCase.get(request_object, presenter)
+        response = presenter.get_response()
+        return JsonResponse(
+            data=response.to_dict(),
+            status=response.status_code
         )
